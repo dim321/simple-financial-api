@@ -19,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: config/docker/Dockerfile.development
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    command: bash -c "bundle; bin/rails db:migrate; bin/rails s -b '0.0.0.0'"
     volumes:
       - .:/rails
       - bundle_cache:/usr/local/bundle
