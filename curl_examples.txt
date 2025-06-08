@@ -1,0 +1,614 @@
+New user registration:
+
+
+curl -i -X POST http://localhost:3000/api/v1/auth \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user": {
+    "email": "test@test.dom",
+    "password": "password",
+    "name": "John"
+        }
+  }'
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+etag: W/"808a35aa1bf398776f37cf370a4c51bb"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 4f830752-5c13-488e-9332-7b50ffbbc2c1
+x-runtime: 0.396657
+server-timing: start_processing.action_controller;dur=0.17, sql.active_record;dur=15.37, start_transaction.active_record;dur=0.00, transaction.active_record;dur=26.72, process_action.action_controller;dur=270.41
+vary: Origin
+Content-Length: 99
+
+{"status":{"code":200,"message":"Signed up successfully."},"data":{"id":6,"email":"test@test.dom"}}
+
+
+
+curl -i -X POST http://localhost:3000/api/v1/auth \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user": {
+    "email": "test1@test.dom",
+    "password": "password",
+    "name": "Peter"
+        }
+  }'
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+etag: W/"cbe456f27a1763efefd718dbdf27671e"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 49aaee73-1f09-4a57-bfc0-009bee6b0882
+x-runtime: 0.212817
+server-timing: start_processing.action_controller;dur=0.01, sql.active_record;dur=2.74, start_transaction.active_record;dur=0.00, transaction.active_record;dur=12.55, process_action.action_controller;dur=204.09
+vary: Origin
+Content-Length: 100
+
+{"status":{"code":200,"message":"Signed up successfully."},"data":{"id":7,"email":"test1@test.dom"}}
+
+
+curl -i -X POST http://localhost:3000/api/v1/auth \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user": {
+    "email": "test2@test.dom",
+    "password": "password",
+    "name": "Donald"
+        }
+  }'
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+etag: W/"1942967452c7772cea48d0d071bbd761"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 9ddf5d0b-313a-4a50-be81-117ad6ee1a0c
+x-runtime: 0.207740
+server-timing: start_processing.action_controller;dur=0.00, sql.active_record;dur=8.78, start_transaction.active_record;dur=0.00, transaction.active_record;dur=14.84, process_action.action_controller;dur=196.21
+vary: Origin
+Content-Length: 100
+
+{"status":{"code":200,"message":"Signed up successfully."},"data":{"id":8,"email":"test2@test.dom"}}
+
+
+curl -i -X POST http://localhost:3000/api/v1/auth \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user": {
+    "email": "test3@test.dom",
+    "password": "password",
+    "name": "Elon"
+        }
+  }'
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+etag: W/"f8f8a17a7eb6a0127abb456566487941"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 69b2f831-523c-4595-80cf-cf7920af5eda
+x-runtime: 0.198100
+server-timing: start_processing.action_controller;dur=0.01, sql.active_record;dur=2.07, start_transaction.active_record;dur=0.00, transaction.active_record;dur=6.56, process_action.action_controller;dur=189.22
+vary: Origin
+Content-Length: 100
+
+{"status":{"code":200,"message":"Signed up successfully."},"data":{"id":9,"email":"test3@test.dom"}}
+
+
+User sign in (jwt token in responce authorization header): _________________________________________________________________________________________________
+
+curl -i -X POST http://localhost:3000//api/v1/auth/sign_in \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user": {
+    "email": "test@test.dom",
+    "password": "password"
+        }
+  }'
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI1NTY5ZjEwYy00NGU1LTRlZmEtYjFmZS01YjhlYjI4NTUyMGEiLCJzdWIiOiI2Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5MjA5NDgxLCJleHAiOjE3NDkyMTEyODF9.ZkMYG90v8108fKX6gmBgIK0M3a5AaFnaCBYjflLZfOw
+etag: W/"1f967c87868f507c6be986abde612686"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: ee2ed45e-6ec3-4f36-b6ef-c67ca7dc81b1
+x-runtime: 0.296256
+server-timing: start_processing.action_controller;dur=0.01, sql.active_record;dur=0.45, instantiation.active_record;dur=5.93, process_action.action_controller;dur=218.25
+vary: Origin
+Content-Length: 99
+
+{"status":{"code":200,"message":"Logged in successfully."},"data":{"id":6,"email":"test@test.dom"}}
+
+
+
+curl -i -X POST http://localhost:3000//api/v1/auth/sign_in \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user": {
+    "email": "test1@test.dom",
+    "password": "password"
+        }
+  }'
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJkYjU5MmNkNi05ZGY2LTRmZmQtOGJlMS05MDI3NTFhOTQ1ZmEiLCJzdWIiOiI3Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5MjA5NjQ3LCJleHAiOjE3NDkyMTE0NDd9.jCdtELTvyp2HPNPss-4ZjcY6kEUrxPAvdiQbLXjr2a8
+etag: W/"4f92cb12bfeb34cf0168915cac380876"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 20142881-bafb-44be-afd2-dbeda9ff622e
+x-runtime: 0.202168
+server-timing: start_processing.action_controller;dur=0.01, sql.active_record;dur=0.45, instantiation.active_record;dur=10.58, process_action.action_controller;dur=196.23
+vary: Origin
+Content-Length: 100
+
+{"status":{"code":200,"message":"Logged in successfully."},"data":{"id":7,"email":"test1@test.dom"}}
+
+
+curl -i -X POST http://localhost:3000//api/v1/auth/sign_in \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user": {
+    "email": "test2@test.dom",
+    "password": "password"
+        }
+  }'
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyM2NiNzEyMC04ZTA3LTRmZjQtYWNlYy02Y2U1Mjk5MDU5N2UiLCJzdWIiOiI4Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5MjA5NzQwLCJleHAiOjE3NDkyMTE1NDB9.5DnhzrCbDshpqhicQi-aNOwpxc-Enlj5SRWcw1FC2us
+etag: W/"ab08f54d99fedaa5723d70f90366d499"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 45cc9531-5c76-49ac-a673-c35235726aa2
+x-runtime: 0.189182
+server-timing: start_processing.action_controller;dur=0.01, sql.active_record;dur=0.57, instantiation.active_record;dur=0.03, process_action.action_controller;dur=182.00
+vary: Origin
+Content-Length: 100
+
+{"status":{"code":200,"message":"Logged in successfully."},"data":{"id":8,"email":"test2@test.dom"}}
+
+
+curl -i -X POST http://localhost:3000//api/v1/auth/sign_in \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user": {
+    "email": "test3@test.dom",
+    "password": "password"
+        }
+  }'
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyZDNlNDdkOC1iZjkwLTQ3M2MtOWRkNC1lODBkNzI5OTc1MGYiLCJzdWIiOiI5Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5MjA5ODA5LCJleHAiOjE3NDkyMTE2MDl9.JfMqMqx-necRPgZB0Q0deYHvR_LZeWMrGHxkYVdbz70
+etag: W/"91ca8e7e49e5b1e116add88fd3e81aa8"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 5d809787-1b66-4f5c-a90d-cd017e085de9
+x-runtime: 0.191159
+server-timing: start_processing.action_controller;dur=0.00, sql.active_record;dur=0.54, instantiation.active_record;dur=0.02, process_action.action_controller;dur=184.71
+vary: Origin
+Content-Length: 100
+
+{"status":{"code":200,"message":"Logged in successfully."},"data":{"id":9,"email":"test3@test.dom"}}
+
+
+
+User logout, jwt token in request headers: _________________________________________________________________________________________________
+
+curl -i -X DELETE http://localhost:3000/api/v1/auth/sign_out \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI1NTY5ZjEwYy00NGU1LTRlZmEtYjFmZS01YjhlYjI4NTUyMGEiLCJzdWIiOiI2Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5MjA5NDgxLCJleHAiOjE3NDkyMTEyODF9.ZkMYG90v8108fKX6gmBgIK0M3a5AaFnaCBYjflLZfOw" 
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+etag: W/"c77ce5d69bddf72c5f7662ee8e4d260f"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 387a978c-e9b0-4d95-8f29-7f1f1e2c8a85
+x-runtime: 0.028258
+server-timing: start_processing.action_controller;dur=0.00, sql.active_record;dur=1.84, instantiation.active_record;dur=0.05, halted_callback.action_controller;dur=0.00, process_action.action_controller;dur=17.13
+vary: Origin
+Content-Length: 51
+
+{"status":200,"message":"Logged out successfully."}
+
+curl -i -X DELETE http://localhost:3000/api/v1/auth/sign_out \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJiYTg0NDFiYy1iZmQwLTQ5MzUtYjg2My1hNzk2YTMzMjNmMzgiLCJzdWIiOiI2Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5MjE2NjU2LCJleHAiOjE3NDkyMTg0NTZ9.TzQtQCasUOX0zYPQkh1G04zhgmq6TTY8-aOKrvrdPEc" 
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+etag: W/"a810fde4f8c04515a0a53757ac496e17"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 744b7b25-0e1b-4fb6-8e59-ef922375b337
+x-runtime: 0.027357
+server-timing: start_processing.action_controller;dur=0.01, sql.active_record;dur=10.98, instantiation.active_record;dur=0.19, halted_callback.action_controller;dur=0.00, process_action.action_controller;dur=6.85
+vary: Origin
+Content-Length: 60
+
+{"status":{"code":200,"message":"Logged out successfully."}}
+
+curl -i -X DELETE http://localhost:3000/api/v1/auth/sign_out   -H "Content-Type: application/json"   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyM2NiNzEyMC04ZTA3LTRmZjQtYWNlYy02Y2U1Mjk5MDU5N2UiLCJzdWIiOiI4Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5MjE3OTI4LCJleHAiOjE3NDkyMTk3Mjh9.RnnQOK29Ta0MPev_ENr9POSyMpT0y-VWGiMsS62YdeE" 
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+etag: W/"a810fde4f8c04515a0a53757ac496e17"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 19ef0276-8804-428b-a701-c96180df5a2c
+x-runtime: 0.106379
+server-timing: start_processing.action_controller;dur=0.14, sql.active_record;dur=9.68, instantiation.active_record;dur=6.04, halted_callback.action_controller;dur=0.00, process_action.action_controller;dur=32.68
+vary: Origin
+Content-Length: 60
+
+{"status":{"code":200,"message":"Logged out successfully."}}
+
+curl -i -X DELETE http://localhost:3000/api/v1/auth/sign_out \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyZDNlNDdkOC1iZjkwLTQ3M2MtOWRkNC1lODBkNzI5OTc1MGYiLCJzdWIiOiI5Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5MjE4MjkwLCJleHAiOjE3NDkyMjAwOTB9.15JtH5EJh7vp55hA8rSsEB8rNrqtfTQNVRBpJbBhcvo" 
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+etag: W/"a810fde4f8c04515a0a53757ac496e17"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 1c8237ad-d235-4ebc-8b0b-08a1aed9b292
+x-runtime: 0.018654
+server-timing: start_processing.action_controller;dur=0.00, sql.active_record;dur=7.84, instantiation.active_record;dur=0.13, halted_callback.action_controller;dur=0.00, process_action.action_controller;dur=2.70
+vary: Origin
+Content-Length: 60
+
+{"status":{"code":200,"message":"Logged out successfully."}}
+
+
+User create account:
+
+
+curl -i -X POST http://localhost:3000/api/v1/accounts   -H "Content-Type: application/json"   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIzNzI4MmM3Yy1lZWFkLTQ3ZWItYTdhMy02YzE0NTRlMGQ2OTUiLCJzdWIiOiIyIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5Mzc0NTYxLCJleHAiOjE3NDkzNzYzNjF9.wgqCsf3Qydn9mOi96Y6OtWB7M16t1-4J6KeyGbyGjhY"   -d '{
+    "account": {
+    "currency": "USD"
+        }
+  }'
+HTTP/1.1 201 Created
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+vary: Accept, Origin
+etag: W/"6e598fea7a5577a2f1877eca6161eaf3"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 250c9a8d-757f-4aa2-af1b-286f7e9f9451
+x-runtime: 0.203573
+server-timing: start_processing.action_controller;dur=0.13, sql.active_record;dur=14.95, instantiation.active_record;dur=7.64, start_transaction.active_record;dur=0.00, transaction.active_record;dur=41.78, process_action.action_controller;dur=120.43
+Content-Length: 292
+
+{"status":{"code":201,"message":"Account created successfully."},"data":{"id":1,"account_number":"85434567629614924283","balance":"0.0","currency":"USD","status":"active","created_at":"2025-06-07T04:09:08.329Z","updated_at":"2025-06-07T04:09:08.329Z","user":{"id":1,"email":"test@test.dom"}}}
+
+
+curl -i -X POST http://localhost:3000/api/v1/accounts   -H "Content-Type: application/json"   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhYzA4OWM1OC0xZmNkLTQxMGItYjk2OC01NzMwYzlkMjc2YWQiLCJzdWIiOiIzIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5Mzc0NTc2LCJleHAiOjE3NDkzNzYzNzZ9.HzZapFPSJisBtTJ1nZqs42v1mE4SR6SXz0OFMNMPt8Y"   -d '{
+    "account": {
+    "currency": "USD"
+        }
+  }'
+HTTP/1.1 201 Created
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+vary: Accept, Origin
+etag: W/"35073a37a4abd4c86de3f0de0d44c4c7"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 1e04dd15-f006-4d1f-84f9-e03d8efb79e2
+x-runtime: 0.079260
+server-timing: start_processing.action_controller;dur=0.01, sql.active_record;dur=6.11, instantiation.active_record;dur=0.03, start_transaction.active_record;dur=0.00, transaction.active_record;dur=43.50, process_action.action_controller;dur=73.58
+Content-Length: 293
+
+{"status":{"code":201,"message":"Account created successfully."},"data":{"id":2,"account_number":"94605002589213741505","balance":"0.0","currency":"USD","status":"active","created_at":"2025-06-08T09:25:02.506Z","updated_at":"2025-06-08T09:25:02.506Z","user":{"id":2,"email":"test1@test.dom"}}}
+
+
+
+
+
+
+curl -i -X POST http://localhost:3000/api/v1/accounts   -H "Content-Type: application/json"   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhODU4OTFlOC1mZDNkLTRlZjctOTZmOC04ZWVlYzdiMmMwYzQiLCJzdWIiOiI0Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5Mzc0NTk2LCJleHAiOjE3NDkzNzYzOTZ9.ppHOY3nSqzTAKVKsmNA7BDhKBbn2NNX1f0KrP5OIdw0"   -d '{
+    "account": {
+    "currency": "USD"
+        }
+  }'
+HTTP/1.1 201 Created
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+vary: Accept, Origin
+etag: W/"90764a66ff4e8a18dbec739376c55b52"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: c96014cb-fe7b-44ca-a1dd-a28c53ae6916
+x-runtime: 0.037042
+server-timing: start_processing.action_controller;dur=0.01, sql.active_record;dur=5.40, instantiation.active_record;dur=0.17, start_transaction.active_record;dur=0.00, transaction.active_record;dur=14.71, process_action.action_controller;dur=27.47
+Content-Length: 293
+
+{"status":{"code":201,"message":"Account created successfully."},"data":{"id":3,"account_number":"80222854482661502282","balance":"0.0","currency":"USD","status":"active","created_at":"2025-06-08T09:29:32.672Z","updated_at":"2025-06-08T09:29:32.672Z","user":{"id":3,"email":"test2@test.dom"}}}
+
+
+curl -i -X POST http://localhost:3000/api/v1/accounts   -H "Content-Type: application/json"   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhODU4OTFlOC1mZDNkLTRlZjctOTZmOC04ZWVlYzdiMmMwYzQiLCJzdWIiOiI0Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5Mzc0NTk2LCJleHAiOjE3NDkzNzYzOTZ9.ppHOY3nSqzTAKVKsmNA7BDhKBbn2NNX1f0KrP5OIdw0"   -d '{
+    "account": {
+    "currency": "USD"
+        }
+  }'
+HTTP/1.1 201 Created
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+vary: Accept, Origin
+etag: W/"8cfc8001c4f8484ac214de03a2d294b0"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: cedb2262-e11c-4a40-9010-df81907ce810
+x-runtime: 0.035935
+server-timing: start_processing.action_controller;dur=0.00, sql.active_record;dur=9.98, instantiation.active_record;dur=0.04, start_transaction.active_record;dur=0.00, transaction.active_record;dur=17.84, process_action.action_controller;dur=30.68
+Content-Length: 293
+
+{"status":{"code":201,"message":"Account created successfully."},"data":{"id":4,"account_number":"78744563006171502829","balance":"0.0","currency":"USD","status":"active","created_at":"2025-06-08T09:31:07.094Z","updated_at":"2025-06-08T09:31:07.094Z","user":{"id":4,"email":"test3@test.dom"}}}
+
+
+
+
+
+
+Check account balance:
+
+curl -i -X GET http://localhost:3000/api/v1/accounts/balance  \
+-H "Content-Type: application/json"   \
+-H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhYzA4OWM1OC0xZmNkLTQxMGItYjk2OC01NzMwYzlkMjc2YWQiLCJzdWIiOiIzIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5Mzc0NTc2LCJleHAiOjE3NDkzNzYzNzZ9.HzZapFPSJisBtTJ1nZqs42v1mE4SR6SXz0OFMNMPt8Y"
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+vary: Accept, Origin
+etag: W/"a09697cabc0372468b14bca0c892b1ca"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: deda7cb1-ae2b-4e4d-997f-26b9555b2697
+x-runtime: 0.177043
+server-timing: sql.active_record;dur=7.74, start_processing.action_controller;dur=0.00, instantiation.active_record;dur=16.88, process_action.action_controller;dur=70.53
+Content-Length: 166
+
+{"status":{"code":200,"message":"Balance."},"data":{"account_number":"85434567629614924283","balance":"0.0","currency":"USD","updated_at":"2025-06-07T04:09:08.329Z"}}
+
+
+
+
+curl -i -X GET http://localhost:3000/api/v1/accounts/balance  \
+-H "Content-Type: application/json"   \
+-H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIzNzI4MmM3Yy1lZWFkLTQ3ZWItYTdhMy02YzE0NTRlMGQ2OTUiLCJzdWIiOiIyIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5Mzc0NTYxLCJleHAiOjE3NDkzNzYzNjF9.wgqCsf3Qydn9mOi96Y6OtWB7M16t1-4J6KeyGbyGjhY"
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+vary: Accept, Origin
+etag: W/"4369e4c85d2feaa4c4e892609b02b462"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: f42a0fd0-4fc8-4750-8c45-be1296b8b09d
+x-runtime: 0.026542
+server-timing: start_processing.action_controller;dur=0.01, sql.active_record;dur=1.32, instantiation.active_record;dur=0.95, process_action.action_controller;dur=19.32
+Content-Length: 166
+
+{"status":{"code":200,"message":"Balance."},"data":{"account_number":"94605002589213741505","balance":"0.0","currency":"USD","updated_at":"2025-06-08T09:25:02.506Z"}}
+
+
+
+
+curl -i -X GET http://localhost:3000/api/v1/accounts/balance  \
+-H "Content-Type: application/json"   \
+-H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhYzA4OWM1OC0xZmNkLTQxMGItYjk2OC01NzMwYzlkMjc2YWQiLCJzdWIiOiIzIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5Mzc0NTc2LCJleHAiOjE3NDkzNzYzNzZ9.HzZapFPSJisBtTJ1nZqs42v1mE4SR6SXz0OFMNMPt8Y"
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+vary: Accept, Origin
+etag: W/"524d4ea9d32a24f3483cf2abe40ca9bf"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 7a48b27d-74db-4a66-9f82-ac5184e871c8
+x-runtime: 0.015538
+server-timing: start_processing.action_controller;dur=0.00, sql.active_record;dur=0.92, instantiation.active_record;dur=0.13, process_action.action_controller;dur=10.24
+Content-Length: 166
+
+{"status":{"code":200,"message":"Balance."},"data":{"account_number":"80222854482661502282","balance":"0.0","currency":"USD","updated_at":"2025-06-08T09:29:32.672Z"}}
+
+
+Make deposit:
+
+curl -i -X POST http://localhost:3000/api/v1/accounts/deposit  -H "Content-Type: application/json"   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxNTc2NDdlNC1kM2U3LTQ3MDItODM2Ni01ZDA4YWRiNWNmYjkiLCJzdWIiOiIxIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5Mzc3MjA3LCJleHAiOjE3NDkzNzkwMDd9.LTqMmcKGJFhR74PH1bXtYUc73tICb7f9YfU9pZTp9zM" -d '{
+"transfer":
+  { "amount": 1000,
+    "currency": "USD"
+        }
+}'
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+vary: Accept, Origin
+etag: W/"091548134d0ba7c34c044f778942e61c"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 983bd3ff-ab4d-4077-bb87-645dbb753562
+x-runtime: 0.196731
+server-timing: sql.active_record;dur=8.64, start_processing.action_controller;dur=0.01, instantiation.active_record;dur=6.42, start_transaction.active_record;dur=0.00, transaction.active_record;dur=63.19, process_action.action_controller;dur=99.88
+Content-Length: 285
+
+{"status":{"code":200,"message":"Deposit successful."},"data":{"id":1,"account_number":"85434567629614924283","balance":"1000.0","currency":"USD","status":"active","created_at":"2025-06-07T04:09:08.329Z","updated_at":"2025-06-08T10:21:42.796Z","user":{"id":1,"email":"test@test.dom"}}}
+
+
+Make withdraw:
+
+
+curl -i -X POST http://localhost:3000/api/v1/accounts/withdraw  -H "Content-Type: application/json"   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxNTc2NDdlNC1kM2U3LTQ3MDItODM2Ni01ZDA4YWRiNWNmYjkiLCJzdWIiOiIxIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5Mzc3MjA3LCJleHAiOjE3NDkzNzkwMDd9.LTqMmcKGJFhR74PH1bXtYUc73tICb7f9YfU9pZTp9zM" -d '{
+"transfer":
+  { "amount": 75,
+    "currency": "USD"
+        }
+}'
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+vary: Accept, Origin
+etag: W/"7e9c1abed1980baba6362a8adc624d83"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: caaa802c-e203-47d4-8894-bf2ad3607441
+x-runtime: 0.556554
+server-timing: sql.active_record;dur=57.02, start_processing.action_controller;dur=0.00, instantiation.active_record;dur=41.74, start_transaction.active_record;dur=0.12, transaction.active_record;dur=114.84, process_action.action_controller;dur=242.63
+Content-Length: 287
+
+{"status":{"code":200,"message":"Withdrawal successful."},"data":{"id":1,"account_number":"85434567629614924283","balance":"925.0","currency":"USD","status":"active","created_at":"2025-06-07T04:09:08.329Z","updated_at":"2025-06-08T10:27:41.443Z","user":{"id":1,"email":"test@test.dom"}}}
+
+
+
+
+transfer money to friend:
+
+curl -i -X POST http://localhost:3000/api/v1/accounts/transfer  -H "Content-Type: application/json"   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxNTc2NDdlNC1kM2U3LTQ3MDItODM2Ni01ZDA4YWRiNWNmYjkiLCJzdWIiOiIxIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5MzgzMjY5LCJleHAiOjE3NDkzOTA0Njl9.5T3Yn3-izztvDkUMViHJN8ro6_Y0sl71283ZdTzLg2A" -d '{
+"transfer":
+  { "amount": 175,
+    "currency": "USD",
+        "recipient_email": "test1@test.dom"
+        }
+}'
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+vary: Accept, Origin
+etag: W/"f24bd052d4c06dd49ee8187d75b72b2b"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 1610fbae-2d60-41d6-94c2-272eb8eac1d9
+x-runtime: 0.188340
+server-timing: sql.active_record;dur=9.40, start_processing.action_controller;dur=0.00, instantiation.active_record;dur=6.03, start_transaction.active_record;dur=0.00, transaction.active_record;dur=63.15, process_action.action_controller;dur=108.44
+Content-Length: 531
+
+{"status":{"code":200,"message":"Transfer successful."},"data":{"sender":{"id":1,"account_number":"85434567629614924283","balance":"750.0","currency":"USD","status":"active","created_at":"2025-06-07T04:09:08.329Z","updated_at":"2025-06-08T12:48:15.146Z","user":{"id":1,"email":"test@test.dom"}},"recipient":{"id":2,"account_number":"94605002589213741505","balance":"175.0","currency":"USD","status":"active","created_at":"2025-06-08T09:25:02.506Z","updated_at":"2025-06-08T12:48:15.154Z","user":{"id":2,"email":"test1@test.dom"}}}}
+
+
+
+
+curl -i -X POST http://localhost:3000/api/v1/accounts/transfer  -H "Content-Type: application/json"   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxNTc2NDdlNC1kM2U3LTQ3MDItODM2Ni01ZDA4YWRiNWNmYjkiLCJzdWIiOiIxIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5MzgzMjY5LCJleHAiOjE3NDkzOTA0Njl9.5T3Yn3-izztvDkUMViHJN8ro6_Y0sl71283ZdTzLg2A" -d '{
+"transfer":
+  { "amount": 175,
+    "currency": "USD",
+        "recipient_email": "test1@test.dom"
+        }
+}'
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+vary: Accept, Origin
+etag: W/"1fd459693196ed27fd39db22c463325f"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 64ea5b6f-d388-4fc4-addc-8c083e58956a
+x-runtime: 0.059492
+server-timing: start_processing.action_controller;dur=0.00, sql.active_record;dur=13.71, instantiation.active_record;dur=2.25, start_transaction.active_record;dur=0.00, transaction.active_record;dur=22.95, process_action.action_controller;dur=53.38
+Content-Length: 531
+
+{"status":{"code":200,"message":"Transfer successful."},"data":{"sender":{"id":1,"account_number":"85434567629614924283","balance":"575.0","currency":"USD","status":"active","created_at":"2025-06-07T04:09:08.329Z","updated_at":"2025-06-08T12:49:43.397Z","user":{"id":1,"email":"test@test.dom"}},"recipient":{"id":2,"account_number":"94605002589213741505","balance":"350.0","currency":"USD","status":"active","created_at":"2025-06-08T09:25:02.506Z","updated_at":"2025-06-08T12:49:43.399Z","user":{"id":2,"email":"test1@test.dom"}}}}
+
+
+Check balance:
+
+curl -i -X GET http://localhost:3000/api/v1/accounts/balance  -H "Content-Type: application/json"   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxNTc2NDdlNC1kM2U3LTQ3MDItODM2Ni01ZDA4YWRiNWNmYjkiLCJzdWIiOiIxIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzQ5MzgzMjY5LCJleHAiOjE3NDkzOTA0Njl9.5T3Yn3-izztvDkUMViHJN8ro6_Y0sl71283ZdTzLg2A"
+HTTP/1.1 200 OK
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-type: application/json; charset=utf-8
+vary: Accept, Origin
+etag: W/"be40e8535ac31ed4f8bc471d5ba3471e"
+cache-control: max-age=0, private, must-revalidate
+x-request-id: 5ed48819-e17e-4231-8c50-96426a16f562
+x-runtime: 0.041215
+server-timing: start_processing.action_controller;dur=0.01, sql.active_record;dur=1.50, instantiation.active_record;dur=1.33, process_action.action_controller;dur=33.37
+Content-Length: 168
+
+{"status":{"code":200,"message":"Balance."},"data":{"account_number":"85434567629614924283","balance":"575.0","currency":"USD","updated_at":"2025-06-08T12:49:43.397Z"}}
+
+
+
+
+
+
+
+
+
