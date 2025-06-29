@@ -1,11 +1,11 @@
 class Account < ApplicationRecord
-  class InsufficientFundsError < StandardError; end
-  class InvalidAmountError < StandardError; end
-  class InactiveAccountError < StandardError; end
-  class TargetAccountInactiveError < StandardError; end
-  class SelfTransferError < StandardError; end
-  class NonZeroBalanceError < StandardError; end
-  class DifferentCurrencyError < StandardError; end
+  # class InsufficientFundsError < StandardError; end
+  # class InvalidAmountError < StandardError; end
+  # class InactiveAccountError < StandardError; end
+  # class TargetAccountInactiveError < StandardError; end
+  # class SelfTransferError < StandardError; end
+  # class NonZeroBalanceError < StandardError; end
+  # class DifferentCurrencyError < StandardError; end
 
   belongs_to :user
   has_many :transactions, dependent: :restrict_with_error
