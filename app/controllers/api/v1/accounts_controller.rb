@@ -2,7 +2,7 @@ module Api
   module V1
     class AccountsController < ApplicationController
       include AccountErrors
-      
+
       before_action :set_account, except: :create
 
       def show
