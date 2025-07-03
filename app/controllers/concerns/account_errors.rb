@@ -65,6 +65,15 @@ module AccountErrors
       }, status: :unprocessable_entity
     end
 
+    rescue_from Account::InvalidAccountError do |e|
+      render json: {
+        status: {
+          code: 422,
+          message: e.message
+        }
+      }, status: :unprocessable_entity
+    end
+
     rescue_from ArgumentError do |e|
       render json: {
         status: {

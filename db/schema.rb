@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_07_030313) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_29_123854) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -32,17 +32,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_07_030313) do
     t.bigint "target_account_id"
     t.decimal "amount", precision: 19, scale: 4, null: false
     t.string "currency", null: false
-    t.string "transaction_type", null: false
-    t.string "status", default: "completed", null: false
     t.text "description"
     t.jsonb "metadata", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status"
+    t.integer "transaction_type"
     t.index ["created_at"], name: "index_transactions_on_created_at"
     t.index ["source_account_id"], name: "index_transactions_on_source_account_id"
-    t.index ["status"], name: "index_transactions_on_status"
     t.index ["target_account_id"], name: "index_transactions_on_target_account_id"
-    t.index ["transaction_type"], name: "index_transactions_on_transaction_type"
   end
 
   create_table "users", force: :cascade do |t|

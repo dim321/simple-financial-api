@@ -49,7 +49,7 @@ class Transaction < ApplicationRecord
   end
 
   def self.create_transfer!(source_account, target_account, amount, description: nil)
-    self.transaction do
+    ActiveRecord::Base.transaction do
       create!(
         source_account: source_account,
         target_account: target_account,

@@ -4,6 +4,7 @@ module Api
       include AccountErrors
 
       before_action :set_account, except: :create
+      before_action :set_recipient_account, only: :transfer
 
       def show
         render json: {
@@ -38,8 +39,9 @@ module Api
       end
 
       def deposit
-        amount = transfer_params[:amount]
-        @account.deposit(amount)
+        amount = params[:amount].to_d
+        description = params[:description]
+        @account.deposit(amount, description: description)
 
         render json: {
           status: {
@@ -51,8 +53,9 @@ module Api
       end
 
       def withdraw
-        amount = transfer_params[:amount].to_d
-        @account.withdraw(amount)
+        amount = params[:amount].to_d
+        description = params[:description]
+        @account.withdraw(amount, description: description)
 
         render json: {
           status: {
@@ -64,14 +67,10 @@ module Api
       end
 
       def transfer
-        amount = transfer_params[:amount].to_d
-        target_account_number = transfer_params[:target_account_number]
-        recipient_email = transfer_params[:recipient_email]
+        amount = params[:amount].to_d
+        description = params[:description]
 
-        recipient_account = Account.find_by(account_number: target_account_number) if target_account_number.present?
-        recipient_account = User.find_by(email: recipient_email).default_account if recipient_email.present?
-
-        @account.transfer(amount, recipient_account)
+        @account.transfer(amount, @recipient_account, description: description)
 
         render json: {
           status: {
@@ -80,28 +79,28 @@ module Api
           },
           data: {
             sender: AccountSerializer.new(@account).serializable_hash[:data][:attributes],
-            recipient: AccountSerializer.new(recipient_account).serializable_hash[:data][:attributes]
+            recipient: AccountSerializer.new(@recipient_account).serializable_hash[:data][:attributes]
           }
         }
       end
 
       def hold
-        @account.freeze_account
+        @account.hold_account
         render json: {
           status: {
             code: 200,
-            message: 'Account frozen successfully.'
+            message: 'Account holded successfully.'
           },
           data: AccountSerializer.new(@account).serializable_hash[:data][:attributes]
         }
       end
 
       def unhold
-        @account.unfreeze_account
+        @account.unhold_account
         render json: {
           status: {
             code: 200,
-            message: 'Account unfrozen successfully.'
+            message: 'Account unholded successfully.'
           },
           data: AccountSerializer.new(@account).serializable_hash[:data][:attributes]
         }
@@ -119,7 +118,7 @@ module Api
       end
 
       def balance
-        # TODO: select user'saccount by currency or account_number
+        # TODO: select user's account by currency or account_number
         @account = current_user.default_account
         render json: {
           status: {
@@ -141,11 +140,11 @@ module Api
       end
 
       def account_params
-        params.require(:account).permit(:currency, :account_number)
+        params.require(:account).permit(:currency)
       end
 
-      def transfer_params
-        params.require(:transfer).permit(:amount, :currency, :recipient_email, :target_account_number)
+      def set_recipient_account
+        @recipient_account = User.find_by(email: params[:recipient_email])&.default_account
       end
     end
   end

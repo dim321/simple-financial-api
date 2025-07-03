@@ -1,11 +1,13 @@
 class Account < ApplicationRecord
-  # class InsufficientFundsError < StandardError; end
-  # class InvalidAmountError < StandardError; end
-  # class InactiveAccountError < StandardError; end
-  # class TargetAccountInactiveError < StandardError; end
-  # class SelfTransferError < StandardError; end
-  # class NonZeroBalanceError < StandardError; end
-  # class DifferentCurrencyError < StandardError; end
+  class InsufficientFundsError < StandardError; end
+  class InvalidAmountError < StandardError; end
+  class InactiveAccountError < StandardError; end
+  class TargetAccountInactiveError < StandardError; end
+  class SelfTransferError < StandardError; end
+  class NonZeroBalanceError < StandardError; end
+  class DifferentCurrencyError < StandardError; end
+  class SameAccountError < StandardError; end
+  class InvalidAccountError < StandardError; end
 
   belongs_to :user
   has_many :transactions, dependent: :restrict_with_error
@@ -29,57 +31,29 @@ class Account < ApplicationRecord
     Transaction.for_account(self).recent
   end
 
-  def deposit(amount)
-    raise InvalidAmountError, 'Amount must be positive' if amount <= 0
-    raise InactiveAccountError, 'Account is not active' unless active?
-
-    with_lock do
-      update!(balance: balance + amount)
-      Transaction.create_deposit!(self, amount)
-    end
+  def deposit(amount, description: nil)
+    AccountOperations::DepositService.new(self, amount, description: description).call
   end
 
-  def withdraw(amount)
-    raise InvalidAmountError, 'Amount must be positive' if amount <= 0
-    raise InactiveAccountError, 'Account is not active' unless active?
-    raise InsufficientFundsError, 'Insufficient funds' if balance < amount
-
-    with_lock do
-      update!(balance: balance - amount)
-      Transaction.create_withdrawal!(self, amount)
-    end
+  def withdraw(amount, description: nil)
+    AccountOperations::WithdrawService.new(self, amount, description: description).call
   end
 
   def transfer(amount, target_account, description: nil)
-    raise InvalidAmountError, 'Amount must be positive' if amount <= 0
-    raise InactiveAccountError, 'Account is not active' unless active?
-    raise TargetAccountInactiveError, 'Target account is not active' unless target_account.active?
-    raise InsufficientFundsError, 'Insufficient funds' if balance < amount
-    raise SelfTransferError, 'Cannot transfer to the same account' if id == target_account.id
-    raise DifferentCurrencyError, 'Cannot transfer between different currencies' if currency != target_account.currency
-
-    with_lock do
-      Transaction.create_transfer!(self, target_account, amount, description: description)
-      self.update!(balance: balance - amount)
-      target_account.update!(balance: target_account.balance + amount)
-    end
+    result = AccountOperations::TransferService.new(self, target_account, amount, description: description).call
+    result[:source_account]
   end
 
   def hold_account
-    raise InactiveAccountError, 'Account is not active' unless active?
-    update!(status: :holded)
+    AccountOperations::AccountStatusService.new(self).hold
   end
 
   def unhold_account
-    raise InactiveAccountError, 'Account is not holded' unless holded?
-    update!(status: :active)
+    AccountOperations::AccountStatusService.new(self).unhold
   end
 
   def close_account
-    raise InactiveAccountError, 'Account is not active' unless active?
-    raise NonZeroBalanceError, 'Cannot close account with positive balance' if balance.positive?
-
-    update!(status: :closed)
+    AccountOperations::AccountStatusService.new(self).close
   end
 
   private
@@ -94,6 +68,6 @@ class Account < ApplicationRecord
   end
 
   def set_default_currency
-    self.currency ||= 'USD'
+    self.currency ||= 'RUB'
   end
 end
