@@ -7,14 +7,14 @@ module AccountOperations
     def hold
       account.with_lock do
         validate_active!
-        account.holded!
+        account.on_hold!
       end
       account
     end
 
     def unhold
       account.with_lock do
-        validate_holded!
+        validate_on_hold!
         account.active!
       end
       account
@@ -36,8 +36,8 @@ module AccountOperations
       raise Account::InactiveAccountError, 'Account is not active' unless account.active?
     end
 
-    def validate_holded!
-      raise Account::InactiveAccountError, 'Account is not holded' unless account.holded?
+    def validate_on_hold!
+      raise Account::InactiveAccountError, 'Account is not on hold' unless account.on_hold?
     end
 
     def validate_zero_balance!

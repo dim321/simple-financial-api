@@ -17,9 +17,9 @@ FactoryBot.define do
       end
     end
 
-    trait :with_holded_account do
+    trait :with_on_hold_account do
       after(:create) do |user|
-        create(:account, user: user, status: 'holded')
+        create(:account, user: user, status: 'on_hold')
       end
     end
 

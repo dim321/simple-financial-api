@@ -4,6 +4,7 @@ module Api
       include AccountErrors
       include AmountValidatable
       include CurrencyNormalizable
+      include IdempotentRequest
       include TransferValidatable
 
       before_action :set_account, except: %i[create index]
@@ -48,43 +49,49 @@ module Api
       end
 
       def deposit
-        amount = parse_amount!(params[:amount])
-        @account.deposit(amount, description: params[:description])
+        with_idempotency do
+          amount = parse_amount!(params[:amount])
+          @account.deposit(amount, description: params[:description])
 
-        render_status_payload(
-          status: { code: 200, message: "Deposit successful." },
-          data: serialize(AccountSerializer, @account.reload)
-        )
+          render_status_payload(
+            status: { code: 200, message: "Deposit successful." },
+            data: serialize(AccountSerializer, @account.reload)
+          )
+        end
       end
 
       def withdraw
-        amount = parse_amount!(params[:amount])
-        @account.withdraw(amount, description: params[:description])
+        with_idempotency do
+          amount = parse_amount!(params[:amount])
+          @account.withdraw(amount, description: params[:description])
 
-        render_status_payload(
-          status: { code: 200, message: "Withdrawal successful." },
-          data: serialize(AccountSerializer, @account.reload)
-        )
+          render_status_payload(
+            status: { code: 200, message: "Withdrawal successful." },
+            data: serialize(AccountSerializer, @account.reload)
+          )
+        end
       end
 
       def transfer
-        amount = parse_amount!(params[:amount])
-        result = @account.transfer(amount, @recipient_account, description: params[:description])
+        with_idempotency do
+          amount = parse_amount!(params[:amount])
+          result = @account.transfer(amount, @recipient_account, description: params[:description])
 
-        render_status_payload(
-          status: { code: 200, message: "Transfer successful." },
-          data: {
-            sender: serialize(AccountSerializer, result[:source_account]),
-            recipient: serialize(AccountSerializer, result[:target_account])
-          }
-        )
+          render_status_payload(
+            status: { code: 200, message: "Transfer successful." },
+            data: {
+              sender: serialize(AccountSerializer, result[:source_account]),
+              recipient: serialize(AccountSerializer, result[:target_account])
+            }
+          )
+        end
       end
 
       def hold
         @account.hold_account
 
         render_status_payload(
-          status: { code: 200, message: "Account holded successfully." },
+          status: { code: 200, message: "Account placed on hold successfully." },
           data: serialize(AccountSerializer, @account.reload)
         )
       end
@@ -93,7 +100,7 @@ module Api
         @account.unhold_account
 
         render_status_payload(
-          status: { code: 200, message: "Account unholded successfully." },
+          status: { code: 200, message: "Account activated successfully." },
           data: serialize(AccountSerializer, @account.reload)
         )
       end

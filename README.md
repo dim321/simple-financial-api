@@ -24,7 +24,7 @@ Review notes: [docs/code-review.md](docs/code-review.md) · Fix plan: [docs/revi
 docker exec -it api-rails bundle exec rspec
 ```
 
-Currently **105+ examples** (request, service, and model specs).
+Currently **120+ examples** (request, service, and model specs).
 
 ## Account selection
 
@@ -34,6 +34,8 @@ Currently **105+ examples** (request, service, and model specs).
 - `account_number` — 20-digit account number
 
 Without them, the user's default **USD** account is used.
+
+The default USD account is created during registration. Account lookup endpoints do not create accounts implicitly.
 
 ## Environment variables
 

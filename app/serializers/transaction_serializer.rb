@@ -1,7 +1,11 @@
 class TransactionSerializer
   include JSONAPI::Serializer
 
-  attributes :id, :amount, :currency, :transaction_type, :status, :description, :created_at
+  attributes :id, :currency, :transaction_type, :status, :description, :created_at
+
+  attribute :amount do |transaction|
+    MoneyAmount.to_api_s(transaction.amount_cents)
+  end
 
   attribute :source_account do |transaction|
     if transaction.source_account

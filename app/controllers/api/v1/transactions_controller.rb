@@ -3,6 +3,7 @@ module Api
     class TransactionsController < ApplicationController
       include AccountErrors
       include CurrencyNormalizable
+      include IdempotentRequest
 
       before_action :normalize_account_currency_param
       before_action :set_account
@@ -25,12 +26,16 @@ module Api
       end
 
       def reverse
-        AccountOperations::ReverseService.new(@transaction).call
+        return render_reverse_forbidden unless @transaction.source_account_id == @account.id
 
-        render_status_payload(
-          status: { code: 200, message: "Transaction reversed successfully." },
-          data: serialize(TransactionSerializer, @transaction.reload)
-        )
+        with_idempotency do
+          AccountOperations::ReverseService.new(@transaction).call
+
+          render_status_payload(
+            status: { code: 200, message: "Transaction reversed successfully." },
+            data: serialize(TransactionSerializer, @transaction.reload)
+          )
+        end
       end
 
       private
@@ -49,6 +54,15 @@ module Api
 
       def set_transaction
         @transaction = @account.ledger_entries.find(params[:id])
+      end
+
+      def render_reverse_forbidden
+        render json: {
+          status: {
+            code: 403,
+            message: "You are not allowed to reverse this transaction."
+          }
+        }, status: :forbidden
       end
     end
   end

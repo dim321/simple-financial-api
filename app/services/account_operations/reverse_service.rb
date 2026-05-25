@@ -7,10 +7,11 @@ module AccountOperations
     end
 
     def call
-      validate!
-
       ActiveRecord::Base.transaction do
-        reverse_transfer!
+        transaction.with_lock do
+          validate!
+          reverse_transfer!
+        end
       end
 
       @transaction.reload
@@ -32,16 +33,16 @@ module AccountOperations
     def reverse_transfer!
       source = transaction.source_account
       target = transaction.target_account
-      amount = transaction.amount
+      amount_cents = transaction.amount_cents
 
       lock_accounts(source, target) do
         source.reload
         target.reload
 
-        raise Account::InsufficientFundsError, "Insufficient funds" if target.balance < amount
+        raise Account::InsufficientFundsError, "Insufficient funds" if target.balance_cents < amount_cents
 
-        source.update!(balance: source.balance + amount)
-        target.update!(balance: target.balance - amount)
+        source.update!(balance_cents: source.balance_cents + amount_cents)
+        target.update!(balance_cents: target.balance_cents - amount_cents)
         Transaction.create_reversal!(transaction)
         transaction.status_reversed!
       end

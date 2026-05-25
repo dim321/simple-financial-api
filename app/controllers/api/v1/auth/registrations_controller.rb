@@ -10,6 +10,8 @@ module Api
 
         def respond_with(resource, _opts = {})
           if resource.persisted?
+            resource.create_default_account!
+
             render json: {
               status: { code: 200, message: "Signed up successfully." },
               data: UserSerializer.new(resource).serializable_hash[:data][:attributes]

@@ -8,8 +8,8 @@ RSpec.describe AccountOperations::AccountStatusService do
 
   describe '#hold' do
     context 'when account is active' do
-      it 'changes status to holded' do
-        expect { service.hold }.to change { account.reload.status }.from('active').to('holded')
+      it 'changes status to on_hold' do
+        expect { service.hold }.to change { account.reload.status }.from('active').to('on_hold')
       end
 
       it 'returns the account' do
@@ -17,8 +17,8 @@ RSpec.describe AccountOperations::AccountStatusService do
       end
     end
 
-    context 'when account is already holded' do
-      before { account.update!(status: 'holded') }
+    context 'when account is already on_hold' do
+      before { account.update!(status: 'on_hold') }
 
       it 'raises InactiveAccountError' do
         expect { service.hold }.to raise_error(Account::InactiveAccountError, 'Account is not active')
@@ -35,11 +35,11 @@ RSpec.describe AccountOperations::AccountStatusService do
   end
 
   describe '#unhold' do
-    context 'when account is holded' do
-      before { account.update!(status: 'holded') }
+    context 'when account is on_hold' do
+      before { account.update!(status: 'on_hold') }
 
       it 'changes status to active' do
-        expect { service.unhold }.to change { account.reload.status }.from('holded').to('active')
+        expect { service.unhold }.to change { account.reload.status }.from('on_hold').to('active')
       end
 
       it 'returns the account' do
@@ -49,7 +49,7 @@ RSpec.describe AccountOperations::AccountStatusService do
 
     context 'when account is already active' do
       it 'raises InactiveAccountError' do
-        expect { service.unhold }.to raise_error(Account::InactiveAccountError, 'Account is not holded')
+        expect { service.unhold }.to raise_error(Account::InactiveAccountError, 'Account is not on hold')
       end
     end
 
@@ -57,7 +57,7 @@ RSpec.describe AccountOperations::AccountStatusService do
       before { account.update!(status: 'closed') }
 
       it 'raises InactiveAccountError' do
-        expect { service.unhold }.to raise_error(Account::InactiveAccountError, 'Account is not holded')
+        expect { service.unhold }.to raise_error(Account::InactiveAccountError, 'Account is not on hold')
       end
     end
   end
@@ -81,13 +81,13 @@ RSpec.describe AccountOperations::AccountStatusService do
       end
     end
 
-    context 'when account is holded with zero balance' do
+    context 'when account is on_hold with zero balance' do
       before do
-        account.update!(status: 'holded', balance: 0.0)
+        account.update!(status: 'on_hold', balance: 0.0)
       end
 
       it 'changes status to closed' do
-        expect { service.close }.to change { account.reload.status }.from('holded').to('closed')
+        expect { service.close }.to change { account.reload.status }.from('on_hold').to('closed')
       end
     end
 
@@ -102,8 +102,8 @@ RSpec.describe AccountOperations::AccountStatusService do
 
   describe 'status transitions' do
     it 'allows valid status transitions' do
-      # active -> holded -> active -> closed (with zero balance)
-      expect { service.hold }.to change { account.reload.status }.to('holded')
+      # active -> on_hold -> active -> closed (with zero balance)
+      expect { service.hold }.to change { account.reload.status }.to('on_hold')
       expect { service.unhold }.to change { account.reload.status }.to('active')
 
       # Set balance to zero to allow closing
@@ -111,8 +111,8 @@ RSpec.describe AccountOperations::AccountStatusService do
       expect { service.close }.to change { account.reload.status }.to('closed')
     end
 
-    it 'allows direct transition from holded to closed with zero balance' do
-      account.update!(status: 'holded', balance: 0.0)
+    it 'allows direct transition from on_hold to closed with zero balance' do
+      account.update!(status: 'on_hold', balance: 0.0)
       expect { service.close }.to change { account.reload.status }.to('closed')
     end
   end
@@ -135,7 +135,7 @@ RSpec.describe AccountOperations::AccountStatusService do
 
       threads.each(&:join)
 
-      expect(account.reload.status).to eq('holded')
+      expect(account.reload.status).to eq('on_hold')
       expect(results.compact.count).to eq(1)
     end
   end

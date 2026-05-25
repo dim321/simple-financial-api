@@ -60,7 +60,7 @@ RSpec.describe AccountOperations::TransferService do
     end
 
     context 'when source account is not active' do
-      let(:source_account) { create(:account, user: user1, balance: 100.0, status: 'holded') }
+      let(:source_account) { create(:account, user: user1, balance: 100.0, status: 'on_hold') }
 
       it 'raises InactiveAccountError' do
         expect { service.call }.to raise_error(Account::InactiveAccountError, 'Source account is not active')

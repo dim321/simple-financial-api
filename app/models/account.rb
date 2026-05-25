@@ -15,12 +15,12 @@ class Account < ApplicationRecord
   validates :account_number, presence: true, uniqueness: true
   validates :currency, presence: true, inclusion: { in: CurrencyCode::SUPPORTED }
   validates :status, presence: true
-  validates :balance, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :balance_cents, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :currency, uniqueness: { scope: :user_id, message: "account in this currency already exists" }
 
   enum :status, {
     active: "active",
-    holded: "holded",
+    on_hold: "on_hold",
     closed: "closed"
   }, default: "active"
 
@@ -53,6 +53,14 @@ class Account < ApplicationRecord
 
   def close_account
     AccountOperations::AccountStatusService.new(self).close
+  end
+
+  def balance
+    MoneyAmount.to_decimal(balance_cents)
+  end
+
+  def balance=(value)
+    self.balance_cents = MoneyAmount.to_cents(value)
   end
 
   private

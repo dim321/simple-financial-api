@@ -72,6 +72,20 @@ RSpec.describe 'Api::V1::Accounts', type: :request do
     end
   end
 
+  describe 'GET /api/v1/accounts/balance without a default account' do
+    it 'returns not found without creating an account' do
+      expect {
+        get '/api/v1/accounts/balance', headers: headers
+      }.not_to change(Account, :count)
+
+      expect(response).to have_http_status(:not_found)
+      expect(json_response['status']).to eq(
+        'code' => 404,
+        'message' => 'Account not found.'
+      )
+    end
+  end
+
   describe 'GET /api/v1/accounts' do
     before do
       create(:account, user: sender, currency: 'USD', balance: 100)
@@ -128,6 +142,61 @@ RSpec.describe 'Api::V1::Accounts', type: :request do
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['status']['message']).to eq('Amount is required or invalid')
+    end
+
+    it 'returns an error when amount has more than two decimal places' do
+      post '/api/v1/accounts/deposit',
+           params: { amount: '10.999', currency: 'USD' },
+           headers: headers,
+           as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['status']['message']).to eq('Amount is required or invalid')
+    end
+
+    it 'does not repeat a deposit when the same Idempotency-Key is reused' do
+      idempotent_headers = headers.merge('Idempotency-Key' => 'deposit-key-1')
+
+      expect {
+        post '/api/v1/accounts/deposit',
+             params: { amount: 100, currency: 'USD' },
+             headers: idempotent_headers,
+             as: :json
+      }.to change(Transaction, :count).by(1)
+
+      expect {
+        post '/api/v1/accounts/deposit',
+             params: { amount: 100, currency: 'USD' },
+             headers: idempotent_headers,
+             as: :json
+      }.not_to change(Transaction, :count)
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data']['balance']).to eq('100.0')
+      expect(sender.accounts.find_by!(currency: 'USD').balance).to eq(100.0)
+    end
+
+    it 'returns a conflict when the same Idempotency-Key is reused with a different body' do
+      idempotent_headers = headers.merge('Idempotency-Key' => 'deposit-key-2')
+
+      post '/api/v1/accounts/deposit',
+           params: { amount: 100, currency: 'USD' },
+           headers: idempotent_headers,
+           as: :json
+
+      expect {
+        post '/api/v1/accounts/deposit',
+             params: { amount: 200, currency: 'USD' },
+             headers: idempotent_headers,
+             as: :json
+      }.not_to change(Transaction, :count)
+
+      expect(response).to have_http_status(:conflict)
+      expect(json_response['status']).to eq(
+        'code' => 409,
+        'message' => 'Idempotency-Key has already been used with a different request.'
+      )
+      expect(sender.accounts.find_by!(currency: 'USD').balance).to eq(100.0)
     end
   end
 

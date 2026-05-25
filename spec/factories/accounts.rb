@@ -16,8 +16,8 @@ FactoryBot.define do
       status { 'active' }
     end
 
-    trait :holded do
-      status { 'holded' }
+    trait :on_hold do
+      status { 'on_hold' }
     end
 
     trait :closed do
