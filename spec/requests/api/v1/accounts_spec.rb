@@ -144,7 +144,7 @@ RSpec.describe 'Api::V1::Accounts', type: :request do
            headers: headers,
            as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['status']).to eq(
         'code' => 422,
         'message' => 'Target account unknown'

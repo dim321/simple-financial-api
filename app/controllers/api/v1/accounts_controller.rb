@@ -34,7 +34,7 @@ module Api
               message: 'Account creation failed.',
               errors: @account.errors.full_messages
             }
-          }, status: :unprocessable_entity
+          }, status: :unprocessable_content
         end
       end
 

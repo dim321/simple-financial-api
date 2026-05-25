@@ -20,7 +20,7 @@ RSpec.describe 'Api::V1::Auth', type: :request do
     it 'returns validation errors for invalid registration data' do
       register_user(email: 'invalid-email', password: '123', name: '')
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['status']['message']).to include("User couldn't be created successfully")
     end
   end

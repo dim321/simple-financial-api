@@ -8,7 +8,7 @@ module AccountErrors
           code: 422,
           message: e.message
         }
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     rescue_from Account::TargetAccountInactiveError do |e|
@@ -17,7 +17,7 @@ module AccountErrors
           code: 422,
           message: e.message
         }
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     rescue_from Account::InvalidAmountError do |e|
@@ -26,7 +26,7 @@ module AccountErrors
           code: 422,
           message: e.message
         }
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     rescue_from Account::InsufficientFundsError do |e|
@@ -35,7 +35,7 @@ module AccountErrors
           code: 422,
           message: e.message
         }
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     rescue_from Account::SelfTransferError do |e|
@@ -44,7 +44,7 @@ module AccountErrors
           code: 422,
           message: e.message
         }
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     rescue_from Account::DifferentCurrencyError do |e|
@@ -53,7 +53,7 @@ module AccountErrors
           code: 422,
           message: e.message
         }
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     rescue_from Account::NonZeroBalanceError do |e|
@@ -62,7 +62,7 @@ module AccountErrors
           code: 422,
           message: e.message
         }
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     rescue_from Account::InvalidAccountError do |e|
@@ -71,7 +71,7 @@ module AccountErrors
           code: 422,
           message: e.message
         }
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     rescue_from ArgumentError do |e|
@@ -80,7 +80,7 @@ module AccountErrors
           code: 422,
           message: 'Invalid amount.'
         }
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     rescue_from ActiveRecord::RecordNotFound do |e|
