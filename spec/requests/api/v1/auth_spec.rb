@@ -4,7 +4,9 @@ RSpec.describe 'Api::V1::Auth', type: :request do
   include ActiveSupport::Testing::TimeHelpers
   describe 'POST /api/v1/auth' do
     it 'registers a new user' do
-      register_user(email: 'newuser@test.dom', password: 'password', name: 'John')
+      expect {
+        register_user(email: 'newuser@test.dom', password: 'password', name: 'John')
+      }.to change(Account, :count).by(1)
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq(
@@ -16,6 +18,11 @@ RSpec.describe 'Api::V1::Auth', type: :request do
         'name' => 'John'
       )
       expect(json_response['data']['id']).to be_present
+
+      account = User.find(json_response['data']['id']).default_account
+      expect(account.currency).to eq('USD')
+      expect(account.balance).to eq(0.0)
+      expect(account.status).to eq('active')
     end
 
     it 'returns validation errors for invalid registration data' do

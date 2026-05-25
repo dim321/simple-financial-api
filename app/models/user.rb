@@ -12,7 +12,11 @@ class User < ApplicationRecord
   validates :name, presence: true
 
   def default_account
-    accounts.find_or_create_by(currency: "USD") do |account|
+    accounts.find_by!(currency: "USD")
+  end
+
+  def create_default_account!
+    accounts.create_or_find_by!(currency: "USD") do |account|
       account.status = "active"
     end
   end

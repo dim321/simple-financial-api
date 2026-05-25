@@ -60,7 +60,7 @@ RSpec.describe AccountOperations::WithdrawService do
     end
 
     context 'when account is not active' do
-      before { account.update!(status: 'holded') }
+      before { account.update!(status: 'on_hold') }
 
       it 'raises InactiveAccountError' do
         expect { service.call }.to raise_error(Account::InactiveAccountError, 'Account is not active')

@@ -21,7 +21,7 @@ module AccountOperations
 
     def validate!
       raise Account::InvalidAccountError, "Target account unknown" if target_account.blank?
-      raise Account::InvalidAmountError, "Amount must be positive" if amount <= 0
+      raise Account::InvalidAmountError, "Amount must be positive" if amount_cents <= 0
       raise Account::InactiveAccountError, "Source account is not active" unless source_account.active?
       raise Account::InactiveAccountError, "Target account is not active" unless target_account.active?
       raise Account::SelfTransferError, "Cannot transfer to the same account" if source_account.id == target_account.id
@@ -33,10 +33,10 @@ module AccountOperations
         src = source_account.reload
         tgt = target_account.reload
 
-        raise Account::InsufficientFundsError, "Insufficient funds" if src.balance < amount
+        raise Account::InsufficientFundsError, "Insufficient funds" if src.balance_cents < amount_cents
 
-        src.update!(balance: src.balance - amount)
-        tgt.update!(balance: tgt.balance + amount)
+        src.update!(balance_cents: src.balance_cents - amount_cents)
+        tgt.update!(balance_cents: tgt.balance_cents + amount_cents)
         Transaction.create_transfer!(src, tgt, amount, description: description)
       end
     end
@@ -46,6 +46,12 @@ module AccountOperations
       ordered[0].with_lock do
         ordered[1].with_lock(&block)
       end
+    end
+
+    def amount_cents
+      @amount_cents ||= MoneyAmount.to_cents(amount)
+    rescue MoneyAmount::InvalidAmountError
+      raise Account::InvalidAmountError, "Amount is required or invalid"
     end
   end
 end

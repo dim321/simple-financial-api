@@ -13,15 +13,9 @@ RSpec.describe 'Financial API flow', type: :request do
     expect(response).to have_http_status(:ok)
     expect(headers['Authorization']).to start_with('Bearer ')
 
-    post '/api/v1/accounts',
-         params: { account: { currency: 'USD' } },
-         headers: headers,
-         as: :json
-    expect(response).to have_http_status(:created)
-    account_number = json_response['data']['account_number']
-
     get '/api/v1/accounts/balance', headers: headers
     expect(response).to have_http_status(:ok)
+    account_number = json_response['data']['account_number']
     expect(json_response['data']).to include(
       'account_number' => account_number,
       'balance' => '0.0',

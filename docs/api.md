@@ -42,7 +42,9 @@ For `deposit`, `withdraw`, `transfer` (sender), `balance`, `hold`, `unhold`, `cl
 | 1 | `account_number` | User's account with this number |
 | 2 | `account_id` / route `:id` | User's account by id |
 | 3 | `currency` | User's existing account in that currency |
-| 4 | (none) | Default USD account (`find_or_create` on first access) |
+| 4 | (none) | Default USD account created during registration |
+
+Account lookup never creates accounts implicitly. Missing account → `404` `Account not found.`
 
 Transfer recipient: `recipient_email` + optional `currency` (default `USD`). Unknown recipient or missing account → `422` `Target account unknown`.
 
@@ -50,7 +52,21 @@ Transfer recipient: `recipient_email` + optional `currency` (default `USD`). Unk
 
 - Required for `deposit`, `withdraw`, `transfer`.
 - Must be numeric and **> 0**.
+- Supports up to **2 decimal places**.
 - Invalid or missing → `422` `Amount is required or invalid`.
+
+## Idempotency
+
+Financial POST endpoints support optional `Idempotency-Key` header:
+
+- `POST /api/v1/accounts/deposit`
+- `POST /api/v1/accounts/withdraw`
+- `POST /api/v1/accounts/transfer`
+- `POST /api/v1/accounts/:account_id/transactions/:id/reverse`
+
+If the same user repeats the same request with the same key, the API returns the original response without executing the operation again.
+
+If the same key is reused with a different method, path, or request body, the API returns `409 Conflict`.
 
 ## Accounts
 
@@ -83,7 +99,3 @@ Transfer recipient: `recipient_email` + optional `currency` (default `USD`). Unk
 - `POST /api/v1/accounts/transfer` — 30 requests / minute / IP
 
 Response when throttled: `429` with `Too many requests. Retry later.`
-
-## Planned (not implemented)
-
-- **Idempotency-Key** header for financial POST operations

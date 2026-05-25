@@ -98,24 +98,27 @@ RSpec.describe User, type: :model do
 
   describe 'default' do
     describe 'account' do
-      it 'creates an account for the user' do
-        expect {
-          create(:user).default_account
-        }.to change(Account, :count).by(1)
+      it 'returns an existing USD account for the user' do
+        user = create(:user)
+        account = create(:account, user: user, currency: "USD")
+
+        expect(user.default_account).to eq(account)
       end
 
-      it 'creates account with correct user association' do
+      it 'raises when the default account is missing' do
         user = create(:user)
-        expect(user.default_account).to be_present
-        expect(user.default_account.user).to eq(user)
+
+        expect { user.default_account }.to raise_error(ActiveRecord::RecordNotFound)
       end
 
-      it 'creates account with default values' do
+      it 'explicitly creates account with default values' do
         user = create(:user)
-        account = user.default_account
+        account = user.create_default_account!
 
         expect(account.balance).to eq(0.0)
         expect(account.status).to eq('active')
+        expect(account.currency).to eq('USD')
+        expect(account.user).to eq(user)
       end
     end
   end
@@ -125,6 +128,8 @@ RSpec.describe User, type: :model do
 
     describe '#account' do
       it 'returns the associated account' do
+        user.create_default_account!
+
         expect(user.default_account).to be_an_instance_of(Account)
         expect(user.default_account.user).to eq(user)
       end
@@ -132,8 +137,10 @@ RSpec.describe User, type: :model do
 
     describe '#account_status' do
       it 'returns the account status' do
-        user.default_account.holded!
-        expect(user.default_account.status).to eq('holded')
+        user.create_default_account!
+
+        user.default_account.on_hold!
+        expect(user.default_account.status).to eq('on_hold')
       end
     end
   end
