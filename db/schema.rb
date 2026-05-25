@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_25_133000) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_25_134000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -29,7 +29,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_25_133000) do
 
   add_check_constraint "accounts", "balance_cents >= 0", name: "accounts_balance_cents_non_negative", validate: false
   add_check_constraint "accounts", "currency::text = ANY (ARRAY['USD'::character varying::text, 'EUR'::character varying::text])", name: "accounts_currency_supported", validate: false
-  add_check_constraint "accounts", "status::text = ANY (ARRAY['active'::character varying::text, 'holded'::character varying::text, 'closed'::character varying::text])", name: "accounts_status_supported", validate: false
+  add_check_constraint "accounts", "status::text = ANY (ARRAY['active'::character varying::text, 'on_hold'::character varying::text, 'closed'::character varying::text])", name: "accounts_status_supported", validate: false
 
   create_table "idempotency_keys", force: :cascade do |t|
     t.bigint "user_id", null: false

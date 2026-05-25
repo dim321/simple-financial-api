@@ -201,7 +201,7 @@ end
 - вложенные транзакции: `with_lock` + `ActiveRecord::Base.transaction` внутри — избыточно, но не критично;
 - deadlock risk при transfer: порядок lock `source` → `target` не сортирован по `id` (классическая рекомендация для переводов A↔B);
 - serializer: `serializable_hash[:data][:attributes]` — хрупко, лучше обёртка или Alba/Blueprint;
-- опечатка `holded` вместо `held`/`on_hold`;
+- ~~опечатка `holded`~~ → исправлено на `on_hold`;
 - README: опечатки, двойной слэш в URL, требование `master.key` у ревьюера.
 
 ---
@@ -253,4 +253,4 @@ end
 | CI не гоняет RSpec | 6.1 |
 | Пробелы в тестах | 6.2 |
 | README / опечатки | 6.3 |
-| `holded`, serializer boilerplate | 7 |
+| serializer boilerplate | 7 |

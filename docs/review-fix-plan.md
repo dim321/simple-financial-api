@@ -330,7 +330,7 @@ run: bin/rails db:test:prepare && bundle exec rspec
 
 | # | Задача | Файлы |
 |---|--------|-------|
-| 7.1 | Enum `holded` → `held` | Миграция значений **или** alias в enum без смены DB |
+| 7.1 | Enum `holded` → `on_hold` | ✅ Миграция + enum |
 | 7.2 | `Account#transfer` | Возвращать `{ source:, target: }` как `TransferService` |
 | 7.3 | Serializer helper | `render_account(account)` в controller/base |
 | 7.4 | RuboCop | Все изменённые файлы |
@@ -417,7 +417,7 @@ run: bin/rails db:test:prepare && bundle exec rspec
 | CI не гоняет RSpec | 6.1 |
 | Пробелы в тестах | 6.2 |
 | README / опечатки | 6.3 |
-| `holded`, serializer boilerplate | 7 |
+| serializer boilerplate | 7 |
 
 ---
 

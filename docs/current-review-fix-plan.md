@@ -350,7 +350,7 @@ Constraints:
 
 - `accounts.balance >= 0`
 - `accounts.currency IN ('USD', 'EUR')`
-- `accounts.status IN ('active', 'holded', 'closed')`
+- `accounts.status IN ('active', 'on_hold', 'closed')`
 - `transactions.amount > 0`
 - `transactions.currency IN ('USD', 'EUR')`
 - `transactions.status IN (0, 1, 2, 3)`
@@ -418,7 +418,7 @@ Rules:
 
 Зависимости: после функциональных фаз
 
-### 7.1 Rename holded
+### 7.1 Rename holded → on_hold (done)
 
 Файлы:
 
@@ -436,7 +436,7 @@ Rules:
 
 Рекомендация: `on_hold`, потому что лучше читается в API.
 
-Риск: это breaking change для response `status`. Если важно сохранить compatibility, оставить enum value `holded`, но исправить только messages. Для тестового задания лучше показать аккуратность и переименовать.
+**Статус:** выполнено — breaking change для `status` в API (`on_hold` вместо `holded`).
 
 ### 7.2 Normalize response messages
 

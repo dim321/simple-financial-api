@@ -15,7 +15,7 @@ class AddFinancialCheckConstraints < ActiveRecord::Migration[8.0]
                          name: "accounts_currency_supported",
                          validate: false
     add_check_constraint :accounts,
-                         "status IN ('active', 'holded', 'closed')",
+                         "status IN ('active', 'on_hold', 'closed')",
                          name: "accounts_status_supported",
                          validate: false
 

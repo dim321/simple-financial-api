@@ -202,7 +202,7 @@ end
 - `transactions.amount > 0`.
 - `accounts.balance >= 0`.
 - `accounts.currency IN ('USD', 'EUR')`.
-- `accounts.status IN ('active', 'holded', 'closed')`.
+- `accounts.status IN ('active', 'on_hold', 'closed')`.
 - Правила source/target по типу transaction: deposit должен иметь target, withdrawal должен иметь source, transfer должен иметь оба.
 
 Последствие: баг, console script или будущий bulk import может записать невозможное состояние.
@@ -219,19 +219,12 @@ end
 - `app/models/account.rb`
 - `app/controllers/api/v1/accounts_controller.rb`
 
-Статус называется `holded`, а ответы API содержат фразы вроде:
+Статус счёта: **`on_hold`** (миграция с `holded`). Сообщения API:
 
 ```text
-Account holded successfully.
-Account unholded successfully.
+Account placed on hold successfully.
+Account activated successfully.
 ```
-
-Проблема не технически критичная, но для тестового задания это снижает впечатление от аккуратности.
-
-Рекомендация:
-
-- Переименовать в `held`, `on_hold` или `frozen`.
-- Выравнять public API messages.
 
 ## Пробелы в тестах
 
