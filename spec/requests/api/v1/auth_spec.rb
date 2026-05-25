@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Auth', type: :request do
+  include ActiveSupport::Testing::TimeHelpers
   describe 'POST /api/v1/auth' do
     it 'registers a new user' do
       register_user(email: 'newuser@test.dom', password: 'password', name: 'John')
@@ -58,6 +59,20 @@ RSpec.describe 'Api::V1::Auth', type: :request do
     end
   end
 
+  describe 'expired JWT' do
+    let!(:user) { create(:user) }
+
+    it 'rejects an expired token' do
+      headers = auth_headers_for(user)
+
+      travel 3.hours do
+        get '/api/v1/accounts/balance', headers: headers
+      end
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
   describe 'DELETE /api/v1/auth/sign_out' do
     let!(:user) { create(:user) }
     let(:headers) { auth_headers_for(user) }
@@ -76,7 +91,16 @@ RSpec.describe 'Api::V1::Auth', type: :request do
       delete '/api/v1/auth/sign_out'
 
       expect(response).to have_http_status(:unauthorized)
-      expect(json_response['status']['message']).to eq('User not found.')
+      expect(json_response['status']['message']).to eq('Unauthorized. Please authenticate to access this resource.')
+    end
+
+    it 'rejects requests with a revoked token after logout' do
+      delete '/api/v1/auth/sign_out', headers: headers
+      expect(response).to have_http_status(:ok)
+
+      get '/api/v1/accounts/balance', headers: headers
+
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 end

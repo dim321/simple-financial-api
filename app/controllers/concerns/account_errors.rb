@@ -1,95 +1,44 @@
 module AccountErrors
   extend ActiveSupport::Concern
 
+  OPERATION_ERRORS = [
+    Account::InactiveAccountError,
+    Account::InvalidAmountError,
+    Account::InsufficientFundsError,
+    Account::SelfTransferError,
+    Account::DifferentCurrencyError,
+    Account::NonZeroBalanceError,
+    Account::InvalidAccountError,
+    Account::InvalidCurrencyError,
+    CurrencyCode::UnsupportedCurrencyError,
+    AccountOperations::ReverseService::NotReversibleError
+  ].freeze
+
   included do
-    rescue_from Account::InactiveAccountError do |e|
-      render json: {
-        status: {
-          code: 422,
-          message: e.message
-        }
-      }, status: :unprocessable_content
+    OPERATION_ERRORS.each do |error_class|
+      rescue_from error_class, with: :render_operation_error
     end
 
-    rescue_from Account::TargetAccountInactiveError do |e|
-      render json: {
-        status: {
-          code: 422,
-          message: e.message
-        }
-      }, status: :unprocessable_content
-    end
+    rescue_from ActiveRecord::RecordNotFound, with: :render_account_not_found
+  end
 
-    rescue_from Account::InvalidAmountError do |e|
-      render json: {
-        status: {
-          code: 422,
-          message: e.message
-        }
-      }, status: :unprocessable_content
-    end
+  private
 
-    rescue_from Account::InsufficientFundsError do |e|
-      render json: {
-        status: {
-          code: 422,
-          message: e.message
-        }
-      }, status: :unprocessable_content
-    end
+  def render_operation_error(exception)
+    render json: {
+      status: {
+        code: 422,
+        message: exception.message
+      }
+    }, status: :unprocessable_content
+  end
 
-    rescue_from Account::SelfTransferError do |e|
-      render json: {
-        status: {
-          code: 422,
-          message: e.message
-        }
-      }, status: :unprocessable_content
-    end
-
-    rescue_from Account::DifferentCurrencyError do |e|
-      render json: {
-        status: {
-          code: 422,
-          message: e.message
-        }
-      }, status: :unprocessable_content
-    end
-
-    rescue_from Account::NonZeroBalanceError do |e|
-      render json: {
-        status: {
-          code: 422,
-          message: e.message
-        }
-      }, status: :unprocessable_content
-    end
-
-    rescue_from Account::InvalidAccountError do |e|
-      render json: {
-        status: {
-          code: 422,
-          message: e.message
-        }
-      }, status: :unprocessable_content
-    end
-
-    rescue_from ArgumentError do |e|
-      render json: {
-        status: {
-          code: 422,
-          message: 'Invalid amount.'
-        }
-      }, status: :unprocessable_content
-    end
-
-    rescue_from ActiveRecord::RecordNotFound do |e|
-      render json: {
-        status: {
-          code: 404,
-          message: 'Account not found.'
-        }
-      }, status: :not_found
-    end
+  def render_account_not_found(_exception)
+    render json: {
+      status: {
+        code: 404,
+        message: "Account not found."
+      }
+    }, status: :not_found
   end
 end

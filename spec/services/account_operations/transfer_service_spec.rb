@@ -20,8 +20,8 @@ RSpec.describe AccountOperations::TransferService do
         expect { service.call }.to change { target_account.reload.balance }.by(amount)
       end
 
-      it 'creates two transactions' do
-        expect { service.call }.to change(Transaction, :count).by(2)
+      it 'creates one transaction' do
+        expect { service.call }.to change(Transaction, :count).by(1)
       end
     end
 
@@ -86,11 +86,11 @@ RSpec.describe AccountOperations::TransferService do
     context 'when description is nil' do
       let(:description) { nil }
 
-      it 'creates transactions without description' do
+      it 'creates transaction without description' do
         service.call
-        transactions = Transaction.last(2)
+        transaction = Transaction.last
 
-        expect(transactions.map(&:description)).to all(be_nil)
+        expect(transaction.description).to be_nil
       end
     end
 
@@ -103,6 +103,30 @@ RSpec.describe AccountOperations::TransferService do
 
       it 'increases target balance correctly' do
         expect { service.call }.to change { target_account.reload.balance }.to(150.0)
+      end
+    end
+
+    context 'when two large transfers happen concurrently' do
+      it 'allows only one transfer when balance covers a single transfer' do
+        threads = []
+        errors = []
+
+        2.times do
+          threads << Thread.new do
+            transfer_service = described_class.new(source_account, target_account, 80.0)
+            begin
+              transfer_service.call
+            rescue Account::InsufficientFundsError => e
+              errors << e
+            end
+          end
+        end
+
+        threads.each(&:join)
+
+        expect(source_account.reload.balance).to eq(20.0)
+        expect(target_account.reload.balance).to eq(130.0)
+        expect(errors.count).to eq(1)
       end
     end
 

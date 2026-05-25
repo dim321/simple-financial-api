@@ -1,6 +1,6 @@
 class Transaction < ApplicationRecord
-  belongs_to :source_account, class_name: 'Account', optional: true
-  belongs_to :target_account, class_name: 'Account', optional: true
+  belongs_to :source_account, class_name: "Account", optional: true
+  belongs_to :target_account, class_name: "Account", optional: true
 
   validates :amount, presence: true
   validates :currency, presence: true
@@ -21,7 +21,7 @@ class Transaction < ApplicationRecord
   }, prefix: true
 
   scope :for_account, ->(account) {
-    where('source_account_id = ? OR target_account_id = ?', account.id, account.id)
+    where("source_account_id = ? OR target_account_id = ?", account.id, account.id)
   }
 
   scope :recent, -> { order(created_at: :desc) }
@@ -49,25 +49,26 @@ class Transaction < ApplicationRecord
   end
 
   def self.create_transfer!(source_account, target_account, amount, description: nil)
-    ActiveRecord::Base.transaction do
-      create!(
-        source_account: source_account,
-        target_account: target_account,
-        amount: amount,
-        currency: source_account.currency,
-        transaction_type: :transfer,
-        status: :completed,
-        description: description
-      )
-      create!(
-        source_account: target_account,
-        target_account: source_account,
-        amount: - amount,
-        currency: target_account.currency,
-        transaction_type: :transfer,
-        status: :completed,
-        description: description
-        )
-    end
+    create!(
+      source_account: source_account,
+      target_account: target_account,
+      amount: amount,
+      currency: source_account.currency,
+      transaction_type: :transfer,
+      status: :completed,
+      description: description
+    )
+  end
+
+  def self.create_reversal!(original)
+    create!(
+      source_account: original.target_account,
+      target_account: original.source_account,
+      amount: original.amount,
+      currency: original.currency,
+      transaction_type: :transfer,
+      status: :completed,
+      description: "Reversal of transaction ##{original.id}"
+    )
   end
 end

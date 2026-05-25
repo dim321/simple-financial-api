@@ -4,14 +4,14 @@ module Api
       class RegistrationsController < Devise::RegistrationsController
         include RackSessionsFix
         respond_to :json
-        skip_before_action :authenticate_user_from_token!, only: %i[new create]
+        skip_before_action :authenticate_user!, only: %i[new create]
 
         private
 
         def respond_with(resource, _opts = {})
           if resource.persisted?
             render json: {
-              status: { code: 200, message: 'Signed up successfully.' },
+              status: { code: 200, message: "Signed up successfully." },
               data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
             }
           else

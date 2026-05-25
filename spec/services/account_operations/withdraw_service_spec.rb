@@ -94,6 +94,29 @@ RSpec.describe AccountOperations::WithdrawService do
       end
     end
 
+    context 'when two large withdrawals happen concurrently' do
+      it 'allows only one withdrawal when balance covers a single withdrawal' do
+        threads = []
+        errors = []
+
+        2.times do
+          threads << Thread.new do
+            withdrawal = described_class.new(account, 60.0)
+            begin
+              withdrawal.call
+            rescue Account::InsufficientFundsError => e
+              errors << e
+            end
+          end
+        end
+
+        threads.each(&:join)
+
+        expect(account.reload.balance).to eq(40.0)
+        expect(errors.count).to eq(1)
+      end
+    end
+
     context 'when multiple withdrawals happen concurrently' do
       it 'prevents race conditions' do
         threads = []

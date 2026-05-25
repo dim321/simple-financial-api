@@ -9,9 +9,12 @@ module AccountOperations
     def call
       account.with_lock do
         validate!
+        account.reload
+        raise Account::InsufficientFundsError, "Insufficient funds" if account.balance < amount
+
         perform_withdrawal
       end
-      @account
+      @account.reload
     end
 
     private
@@ -19,9 +22,8 @@ module AccountOperations
     attr_reader :account, :amount, :description
 
     def validate!
-      raise Account::InvalidAmountError, 'Amount must be positive' if amount <= 0
-      raise Account::InactiveAccountError, 'Account is not active' unless account.active?
-      raise Account::InsufficientFundsError, 'Insufficient funds' if account.balance < amount
+      raise Account::InvalidAmountError, "Amount must be positive" if amount <= 0
+      raise Account::InactiveAccountError, "Account is not active" unless account.active?
     end
 
     def perform_withdrawal

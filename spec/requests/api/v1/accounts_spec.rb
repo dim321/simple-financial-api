@@ -26,8 +26,7 @@ RSpec.describe 'Api::V1::Accounts', type: :request do
       )
       expect(json_response['data']['account_number']).to be_present
       expect(json_response['data']['user']).to eq(
-        'id' => sender.id,
-        'email' => sender.email
+        'id' => sender.id
       )
     end
 
@@ -43,6 +42,7 @@ RSpec.describe 'Api::V1::Accounts', type: :request do
   describe 'GET /api/v1/accounts/balance' do
     before do
       create(:account, user: sender, currency: 'USD', balance: 925.0)
+      create(:account, user: sender, currency: 'EUR', balance: 50.0)
     end
 
     it 'returns the balance of the default account' do
@@ -59,6 +59,31 @@ RSpec.describe 'Api::V1::Accounts', type: :request do
       )
       expect(json_response['data']['account_number']).to be_present
       expect(json_response['data']['updated_at']).to be_present
+    end
+
+    it 'returns the balance for the account selected by currency' do
+      get '/api/v1/accounts/balance', params: { currency: 'EUR' }, headers: headers
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data']).to include(
+        'balance' => '50.0',
+        'currency' => 'EUR'
+      )
+    end
+  end
+
+  describe 'GET /api/v1/accounts' do
+    before do
+      create(:account, user: sender, currency: 'USD', balance: 100)
+      create(:account, user: sender, currency: 'EUR', balance: 50)
+    end
+
+    it 'returns all accounts for the authenticated user' do
+      get '/api/v1/accounts', headers: headers
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].size).to eq(2)
+      expect(json_response['data'].map { |row| row['currency'] }).to contain_exactly('USD', 'EUR')
     end
   end
 
@@ -80,6 +105,29 @@ RSpec.describe 'Api::V1::Accounts', type: :request do
       )
       expect(json_response['data']['balance']).to eq('1000.0')
       expect(json_response['data']['currency']).to eq('USD')
+    end
+
+    it 'deposits funds to the account selected by currency' do
+      create(:account, user: sender, currency: 'EUR', balance: 0)
+
+      post '/api/v1/accounts/deposit',
+           params: { amount: 250, currency: 'EUR' },
+           headers: headers,
+           as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data']['balance']).to eq('250.0')
+      expect(json_response['data']['currency']).to eq('EUR')
+    end
+
+    it 'returns an error when amount is missing' do
+      post '/api/v1/accounts/deposit',
+           params: { currency: 'USD' },
+           headers: headers,
+           as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['status']['message']).to eq('Amount is required or invalid')
     end
   end
 
@@ -130,8 +178,32 @@ RSpec.describe 'Api::V1::Accounts', type: :request do
       )
       expect(json_response['data']['sender']['balance']).to eq('750.0')
       expect(json_response['data']['recipient']['balance']).to eq('175.0')
-      expect(json_response['data']['sender']['user']['email']).to eq(sender.email)
-      expect(json_response['data']['recipient']['user']['email']).to eq(recipient.email)
+      expect(json_response['data']['sender']['user']).to eq('id' => sender.id)
+      expect(json_response['data']['recipient']['user']).to eq('id' => recipient.id)
+    end
+
+    it 'returns an error when recipient email is missing' do
+      post '/api/v1/accounts/transfer',
+           params: { amount: 10, currency: 'USD' },
+           headers: headers,
+           as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['status']['message']).to eq('Recipient email is required')
+    end
+
+    it 'returns an error for unsupported currency' do
+      post '/api/v1/accounts/transfer',
+           params: {
+             amount: 10,
+             currency: 'GBP',
+             recipient_email: recipient.email
+           },
+           headers: headers,
+           as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['status']['message']).to include('Unsupported currency')
     end
 
     it 'returns an error for an unknown recipient' do

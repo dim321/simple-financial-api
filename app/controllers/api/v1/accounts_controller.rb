@@ -2,36 +2,45 @@ module Api
   module V1
     class AccountsController < ApplicationController
       include AccountErrors
+      include AmountValidatable
+      include CurrencyNormalizable
+      include TransferValidatable
 
-      before_action :set_account, except: :create
+      before_action :set_account, except: %i[create index]
+      before_action :normalize_account_currency_param, except: %i[create index]
+      before_action :validate_transfer_params!, only: :transfer
       before_action :set_recipient_account, only: :transfer
 
+      def index
+        accounts = current_user.accounts.order(:id)
+
+        render_status_payload(
+          status: { code: 200, message: "Accounts retrieved successfully." },
+          data: accounts.map { |account| serialize(AccountSerializer, account) }
+        )
+      end
+
       def show
-        render json: {
-          status: {
-            code: 200,
-            message: 'Account retrieved successfully.'
-          },
-          data: AccountSerializer.new(@account).serializable_hash[:data][:attributes]
-        }
+        render_status_payload(
+          status: { code: 200, message: "Account retrieved successfully." },
+          data: serialize(AccountSerializer, @account)
+        )
       end
 
       def create
         @account = current_user.accounts.build(account_params)
 
         if @account.save
-          render json: {
-            status: {
-              code: 201,
-              message: 'Account created successfully.'
-            },
-            data: AccountSerializer.new(@account).serializable_hash[:data][:attributes]
-          }, status: :created
+          render_status_payload(
+            status: { code: 201, message: "Account created successfully." },
+            data: serialize(AccountSerializer, @account),
+            http_status: :created
+          )
         else
           render json: {
             status: {
               code: 422,
-              message: 'Account creation failed.',
+              message: "Account creation failed.",
               errors: @account.errors.full_messages
             }
           }, status: :unprocessable_content
@@ -39,112 +48,100 @@ module Api
       end
 
       def deposit
-        amount = params[:amount].to_d
-        description = params[:description]
-        @account.deposit(amount, description: description)
+        amount = parse_amount!(params[:amount])
+        @account.deposit(amount, description: params[:description])
 
-        render json: {
-          status: {
-            code: 200,
-            message: 'Deposit successful.'
-          },
-          data: AccountSerializer.new(@account).serializable_hash[:data][:attributes]
-        }
+        render_status_payload(
+          status: { code: 200, message: "Deposit successful." },
+          data: serialize(AccountSerializer, @account.reload)
+        )
       end
 
       def withdraw
-        amount = params[:amount].to_d
-        description = params[:description]
-        @account.withdraw(amount, description: description)
+        amount = parse_amount!(params[:amount])
+        @account.withdraw(amount, description: params[:description])
 
-        render json: {
-          status: {
-            code: 200,
-            message: 'Withdrawal successful.'
-          },
-          data: AccountSerializer.new(@account).serializable_hash[:data][:attributes]
-        }
+        render_status_payload(
+          status: { code: 200, message: "Withdrawal successful." },
+          data: serialize(AccountSerializer, @account.reload)
+        )
       end
 
       def transfer
-        amount = params[:amount].to_d
-        description = params[:description]
+        amount = parse_amount!(params[:amount])
+        result = @account.transfer(amount, @recipient_account, description: params[:description])
 
-        @account.transfer(amount, @recipient_account, description: description)
-
-        render json: {
-          status: {
-            code: 200,
-            message: 'Transfer successful.'
-          },
+        render_status_payload(
+          status: { code: 200, message: "Transfer successful." },
           data: {
-            sender: AccountSerializer.new(@account).serializable_hash[:data][:attributes],
-            recipient: AccountSerializer.new(@recipient_account).serializable_hash[:data][:attributes]
+            sender: serialize(AccountSerializer, result[:source_account]),
+            recipient: serialize(AccountSerializer, result[:target_account])
           }
-        }
+        )
       end
 
       def hold
         @account.hold_account
-        render json: {
-          status: {
-            code: 200,
-            message: 'Account holded successfully.'
-          },
-          data: AccountSerializer.new(@account).serializable_hash[:data][:attributes]
-        }
+
+        render_status_payload(
+          status: { code: 200, message: "Account holded successfully." },
+          data: serialize(AccountSerializer, @account.reload)
+        )
       end
 
       def unhold
         @account.unhold_account
-        render json: {
-          status: {
-            code: 200,
-            message: 'Account unholded successfully.'
-          },
-          data: AccountSerializer.new(@account).serializable_hash[:data][:attributes]
-        }
+
+        render_status_payload(
+          status: { code: 200, message: "Account unholded successfully." },
+          data: serialize(AccountSerializer, @account.reload)
+        )
       end
 
       def close
         @account.close_account
-        render json: {
-          status: {
-            code: 200,
-            message: 'Account closed successfully.'
-          },
-          data: AccountSerializer.new(@account).serializable_hash[:data][:attributes]
-        }
+
+        render_status_payload(
+          status: { code: 200, message: "Account closed successfully." },
+          data: serialize(AccountSerializer, @account.reload)
+        )
       end
 
       def balance
-        # TODO: select user's account by currency or account_number
-        @account = current_user.default_account
-        render json: {
-          status: {
-            code: 200,
-            message: 'Balance.'
-          },
-          data: BalanceSerializer.new(@account).serializable_hash[:data][:attributes]
-        }
+        render_status_payload(
+          status: { code: 200, message: "Balance." },
+          data: serialize(BalanceSerializer, @account)
+        )
       end
 
       private
 
       def set_account
-        @account = if params[:id]
-          current_user.accounts.find(params[:id])
-        else
-          current_user.default_account
-        end
+        @account = AccountResolver.new(current_user).resolve(
+          account_id: params[:id] || params[:account_id],
+          currency: params[:currency],
+          account_number: params[:account_number]
+        )
       end
 
       def account_params
-        params.require(:account).permit(:currency)
+        permitted = params.require(:account).permit(:currency)
+        permitted[:currency] = CurrencyCode.normalize!(permitted[:currency]) if permitted[:currency].present?
+        permitted
+      rescue CurrencyCode::UnsupportedCurrencyError => e
+        raise Account::InvalidCurrencyError, e.message
+      end
+
+      def normalize_account_currency_param
+        normalize_optional_currency!(params[:currency])
       end
 
       def set_recipient_account
-        @recipient_account = User.find_by(email: params[:recipient_email])&.default_account
+        @recipient_account = AccountResolver.new(current_user).resolve_recipient(
+          email: params[:recipient_email],
+          currency: params[:currency]
+        )
+        raise Account::InvalidAccountError, "Target account unknown" if @recipient_account.nil?
       end
     end
   end
