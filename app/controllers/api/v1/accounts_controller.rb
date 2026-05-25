@@ -3,8 +3,12 @@ module Api
     class AccountsController < ApplicationController
       include AccountErrors
       include AmountValidatable
+      include CurrencyNormalizable
+      include TransferValidatable
 
       before_action :set_account, except: %i[create index]
+      before_action :normalize_account_currency_param, except: %i[create index]
+      before_action :validate_transfer_params!, only: :transfer
       before_action :set_recipient_account, only: :transfer
 
       def index
@@ -121,7 +125,15 @@ module Api
       end
 
       def account_params
-        params.require(:account).permit(:currency)
+        permitted = params.require(:account).permit(:currency)
+        permitted[:currency] = CurrencyCode.normalize!(permitted[:currency]) if permitted[:currency].present?
+        permitted
+      rescue CurrencyCode::UnsupportedCurrencyError => e
+        raise Account::InvalidCurrencyError, e.message
+      end
+
+      def normalize_account_currency_param
+        normalize_optional_currency!(params[:currency])
       end
 
       def set_recipient_account

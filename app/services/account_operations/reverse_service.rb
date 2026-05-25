@@ -42,6 +42,7 @@ module AccountOperations
 
         source.update!(balance: source.balance + amount)
         target.update!(balance: target.balance - amount)
+        Transaction.create_reversal!(transaction)
         transaction.status_reversed!
       end
     end

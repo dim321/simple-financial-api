@@ -11,10 +11,6 @@ class User < ApplicationRecord
   validates :password, presence: true, length: { minimum: 8 }, if: :password_required?
   validates :name, presence: true
 
-  def jwt_token
-    Warden::JWTAuth::UserEncoder.new.call(self, :user, nil).first
-  end
-
   def default_account
     accounts.find_or_create_by(currency: "USD") do |account|
       account.status = "active"

@@ -3,9 +3,13 @@ module RequestHelpers
     JSON.parse(response.body)
   end
 
+  def jwt_token_for(user)
+    Warden::JWTAuth::UserEncoder.new.call(user, :user, nil).first
+  end
+
   def auth_headers_for(user)
     {
-      'Authorization' => "Bearer #{user.jwt_token}",
+      'Authorization' => "Bearer #{jwt_token_for(user)}",
       'Content-Type' => 'application/json'
     }
   end

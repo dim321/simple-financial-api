@@ -2,7 +2,9 @@ module Api
   module V1
     class TransactionsController < ApplicationController
       include AccountErrors
+      include CurrencyNormalizable
 
+      before_action :normalize_account_currency_param
       before_action :set_account
       before_action :set_transaction, only: %i[show reverse]
 
@@ -32,6 +34,10 @@ module Api
       end
 
       private
+
+      def normalize_account_currency_param
+        normalize_optional_currency!(params[:currency])
+      end
 
       def set_account
         @account = AccountResolver.new(current_user).resolve(

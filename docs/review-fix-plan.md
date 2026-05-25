@@ -22,14 +22,16 @@
 
 ## Критерии приёмки (Definition of Done)
 
-- [ ] `bundle exec rspec` — 0 failures (расширенный набор по новым сценариям).
-- [ ] GitHub Actions запускает RSpec, не только пустой Minitest.
-- [ ] Concurrent transfer: при balance 100 два параллельных transfer по 80 → один успех, один `InsufficientFundsError`, balance = 20.
-- [ ] `currency` в deposit/withdraw/transfer/balance выбирает нужный счёт пользователя.
-- [ ] Logout инвалидирует JWT (повторный запрос со старым токеном → 401).
-- [ ] Нет мёртвых routes: `index`, `transactions`, `reverse` реализованы **или** удалены из `routes.rb` с обновлением README.
-- [ ] `bin/rubocop` и `bin/brakeman` без новых проблем в изменённых файлах.
-- [ ] README и примеры curl актуальны.
+- [x] `bundle exec rspec` — 0 failures (расширенный набор по новым сценариям).
+- [x] GitHub Actions запускает RSpec, не только пустой Minitest.
+- [x] Concurrent transfer: при balance 100 два параллельных transfer по 80 → один успех, один `InsufficientFundsError`, balance = 20.
+- [x] `currency` в deposit/withdraw/transfer/balance выбирает нужный счёт пользователя.
+- [x] Logout инвалидирует JWT (повторный запрос со старым токеном → 401).
+- [x] Нет мёртвых routes: `index`, `transactions`, `reverse` реализованы **или** удалены из `routes.rb` с обновлением README.
+- [x] `bin/rubocop` без новых проблем в изменённых файлах.
+- [x] README и примеры curl актуальны (`docs/api.md`).
+- [ ] `bin/brakeman` — прогнать перед merge.
+- [ ] **Idempotency-Key** — отложено (см. `docs/api.md`).
 
 ---
 
@@ -78,7 +80,7 @@
 
 | # | Задача | Результат |
 |---|--------|-----------|
-| 0.1 | Зафиксировать контракт API (см. выше) | Этот документ + при необходимости `docs/api.md` |
+| 0.1 | Зафиксировать контракт API (см. выше) | [docs/api.md](./api.md) |
 | 0.2 | Согласовать решение по мёртвым routes | Реализовать transactions API **или** удалить из routes |
 | 0.3 | Чеклист приёмки в PR | Секция DoD в описании PR |
 

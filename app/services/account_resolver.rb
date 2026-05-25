@@ -9,7 +9,8 @@ class AccountResolver
     elsif account_id.present?
       @user.accounts.find(account_id)
     elsif currency.present?
-      @user.accounts.find_by!(currency: currency.to_s.upcase)
+      code = normalize_currency!(currency)
+      @user.accounts.find_by!(currency: code)
     else
       @user.default_account
     end
@@ -19,7 +20,15 @@ class AccountResolver
     recipient = User.find_by(email: email)
     return nil if recipient.nil?
 
-    currency = (currency.presence || "USD").to_s.upcase
-    recipient.accounts.find_by(currency: currency)
+    code = currency.present? ? normalize_currency!(currency) : "USD"
+    recipient.accounts.find_by(currency: code)
+  end
+
+  private
+
+  def normalize_currency!(currency)
+    CurrencyCode.normalize!(currency)
+  rescue CurrencyCode::UnsupportedCurrencyError => e
+    raise Account::InvalidCurrencyError, e.message
   end
 end

@@ -16,8 +16,17 @@ RSpec.describe AccountResolver do
       expect(resolver.resolve(account_number: eur_account.account_number)).to eq(eur_account)
     end
 
+    it "raises when currency is unsupported" do
+      expect { resolver.resolve(currency: "GBP") }.to raise_error(Account::InvalidCurrencyError, /Unsupported currency/)
+    end
+
     it "raises when currency account does not exist" do
-      expect { resolver.resolve(currency: "GBP") }.to raise_error(ActiveRecord::RecordNotFound)
+      user_with_usd_only = create(:user)
+      create(:account, user: user_with_usd_only, currency: "USD")
+
+      expect {
+        described_class.new(user_with_usd_only).resolve(currency: "EUR")
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 

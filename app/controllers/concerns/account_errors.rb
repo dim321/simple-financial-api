@@ -9,6 +9,8 @@ module AccountErrors
     Account::DifferentCurrencyError,
     Account::NonZeroBalanceError,
     Account::InvalidAccountError,
+    Account::InvalidCurrencyError,
+    CurrencyCode::UnsupportedCurrencyError,
     AccountOperations::ReverseService::NotReversibleError
   ].freeze
 

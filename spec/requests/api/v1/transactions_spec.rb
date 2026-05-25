@@ -26,6 +26,21 @@ RSpec.describe "Api::V1::Transactions", type: :request do
     end
   end
 
+  describe "GET /api/v1/accounts/:account_id/transactions/:id" do
+    let!(:transfer) do
+      account.transfer(50.0, recipient_account)
+      Transaction.last
+    end
+
+    it "returns a single transaction" do
+      get "/api/v1/accounts/#{account.id}/transactions/#{transfer.id}", headers: headers
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response["data"]["id"]).to eq(transfer.id)
+      expect(json_response["data"]["amount"]).to eq("50.0")
+    end
+  end
+
   describe "POST /api/v1/accounts/:account_id/transactions/:id/reverse" do
     let!(:transfer) do
       account.transfer(100.0, recipient_account)
@@ -33,7 +48,9 @@ RSpec.describe "Api::V1::Transactions", type: :request do
     end
 
     it "reverses a completed transfer" do
-      post "/api/v1/accounts/#{account.id}/transactions/#{transfer.id}/reverse", headers: headers
+      expect {
+        post "/api/v1/accounts/#{account.id}/transactions/#{transfer.id}/reverse", headers: headers
+      }.to change(Transaction, :count).by(1)
 
       expect(response).to have_http_status(:ok)
       expect(json_response["data"]["status"]).to eq("reversed")

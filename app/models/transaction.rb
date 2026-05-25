@@ -59,4 +59,16 @@ class Transaction < ApplicationRecord
       description: description
     )
   end
+
+  def self.create_reversal!(original)
+    create!(
+      source_account: original.target_account,
+      target_account: original.source_account,
+      amount: original.amount,
+      currency: original.currency,
+      transaction_type: :transfer,
+      status: :completed,
+      description: "Reversal of transaction ##{original.id}"
+    )
+  end
 end

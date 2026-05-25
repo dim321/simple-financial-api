@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Financial API flow', type: :request do
   it 'covers the main usage scenario from README' do
     email = 'flow_user@test.dom'
-    password = 'password'
+    password = 'password123'
 
     register_user(email: email, password: password, name: 'John')
     expect(response).to have_http_status(:ok)

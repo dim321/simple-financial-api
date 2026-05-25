@@ -6,13 +6,14 @@ class Account < ApplicationRecord
   class NonZeroBalanceError < StandardError; end
   class DifferentCurrencyError < StandardError; end
   class InvalidAccountError < StandardError; end
+  class InvalidCurrencyError < StandardError; end
 
   belongs_to :user
   has_many :outgoing_transactions, class_name: "Transaction", foreign_key: :source_account_id, dependent: :restrict_with_error
   has_many :incoming_transactions, class_name: "Transaction", foreign_key: :target_account_id, dependent: :restrict_with_error
 
   validates :account_number, presence: true, uniqueness: true
-  validates :currency, presence: true
+  validates :currency, presence: true, inclusion: { in: CurrencyCode::SUPPORTED }
   validates :status, presence: true
   validates :balance, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :currency, uniqueness: { scope: :user_id, message: "account in this currency already exists" }
