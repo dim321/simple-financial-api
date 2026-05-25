@@ -37,7 +37,7 @@ RSpec.describe User, type: :model do
     it { should validate_presence_of(:email) }
     it { should validate_uniqueness_of(:email).case_insensitive }
     it { should validate_presence_of(:password) }
-    it { should validate_length_of(:password).is_at_least(6) }
+    it { should validate_length_of(:password).is_at_least(8) }
   end
 
   describe 'factory' do
@@ -90,9 +90,9 @@ RSpec.describe User, type: :model do
     end
 
     it 'requires minimum password length' do
-      user = build(:user, password: '12345', password_confirmation: '12345')
+      user = build(:user, password: '1234567', password_confirmation: '1234567')
       expect(user).not_to be_valid
-      expect(user.errors[:password]).to include('is too short (minimum is 6 characters)')
+      expect(user.errors[:password]).to include('is too short (minimum is 8 characters)')
     end
   end
 

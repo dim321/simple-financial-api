@@ -15,14 +15,13 @@ Rails 8
 ## Run tests in docker container:
 ```bash
 docker exec -it api-rails bundle exec rspec
-Randomized with seed 63774
-................................................................................
-
-Finished in 18.7 seconds (files took 1.92 seconds to load)
-79 examples, 0 failures
-
-
 ```
+
+## Account selection in operations
+
+Deposit, withdraw, transfer, and balance accept optional `currency` or `account_number` to target a specific account. Without them, the user's default USD account is used.
+
+See [docs/review-fix-plan.md](docs/review-fix-plan.md) and [docs/code-review.md](docs/code-review.md) for the review and fix plan.
 
 ## Main usage examples:
 

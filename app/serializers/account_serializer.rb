@@ -5,8 +5,7 @@ class AccountSerializer
 
   attribute :user do |account|
     {
-      id: account.user.id,
-      email: account.user.email
+      id: account.user.id
     }
   end
 end

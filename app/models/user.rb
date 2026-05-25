@@ -6,10 +6,9 @@ class User < ApplicationRecord
          :jwt_authenticatable, jwt_revocation_strategy: self
 
   has_many :accounts, dependent: :destroy
-  has_many :transactions, through: :accounts
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :password, presence: true, length: { minimum: 6 }, if: :password_required?
+  validates :password, presence: true, length: { minimum: 8 }, if: :password_required?
   validates :name, presence: true
 
   def jwt_token
@@ -17,13 +16,13 @@ class User < ApplicationRecord
   end
 
   def default_account
-    accounts.find_or_create_by(currency: 'USD') do |account|
-      account.status = 'active'
+    accounts.find_or_create_by(currency: "USD") do |account|
+      account.status = "active"
     end
   end
 
   def account_in_currency(currency)
-    accounts.find_or_create_by!(currency: currency)
+    accounts.find_by(currency: currency.to_s.upcase)
   end
 
   private

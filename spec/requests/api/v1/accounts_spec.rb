@@ -26,8 +26,7 @@ RSpec.describe 'Api::V1::Accounts', type: :request do
       )
       expect(json_response['data']['account_number']).to be_present
       expect(json_response['data']['user']).to eq(
-        'id' => sender.id,
-        'email' => sender.email
+        'id' => sender.id
       )
     end
 
@@ -62,6 +61,21 @@ RSpec.describe 'Api::V1::Accounts', type: :request do
     end
   end
 
+  describe 'GET /api/v1/accounts' do
+    before do
+      create(:account, user: sender, currency: 'USD', balance: 100)
+      create(:account, user: sender, currency: 'EUR', balance: 50)
+    end
+
+    it 'returns all accounts for the authenticated user' do
+      get '/api/v1/accounts', headers: headers
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].size).to eq(2)
+      expect(json_response['data'].map { |row| row['currency'] }).to contain_exactly('USD', 'EUR')
+    end
+  end
+
   describe 'POST /api/v1/accounts/deposit' do
     before do
       create(:account, user: sender, currency: 'USD', balance: 0)
@@ -80,6 +94,29 @@ RSpec.describe 'Api::V1::Accounts', type: :request do
       )
       expect(json_response['data']['balance']).to eq('1000.0')
       expect(json_response['data']['currency']).to eq('USD')
+    end
+
+    it 'deposits funds to the account selected by currency' do
+      create(:account, user: sender, currency: 'EUR', balance: 0)
+
+      post '/api/v1/accounts/deposit',
+           params: { amount: 250, currency: 'EUR' },
+           headers: headers,
+           as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data']['balance']).to eq('250.0')
+      expect(json_response['data']['currency']).to eq('EUR')
+    end
+
+    it 'returns an error when amount is missing' do
+      post '/api/v1/accounts/deposit',
+           params: { currency: 'USD' },
+           headers: headers,
+           as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['status']['message']).to eq('Amount is required or invalid')
     end
   end
 
@@ -130,8 +167,8 @@ RSpec.describe 'Api::V1::Accounts', type: :request do
       )
       expect(json_response['data']['sender']['balance']).to eq('750.0')
       expect(json_response['data']['recipient']['balance']).to eq('175.0')
-      expect(json_response['data']['sender']['user']['email']).to eq(sender.email)
-      expect(json_response['data']['recipient']['user']['email']).to eq(recipient.email)
+      expect(json_response['data']['sender']['user']).to eq('id' => sender.id)
+      expect(json_response['data']['recipient']['user']).to eq('id' => recipient.id)
     end
 
     it 'returns an error for an unknown recipient' do
