@@ -16,7 +16,6 @@ Test task: financial REST API.
 
 Full contract: [docs/api.md](docs/api.md)
 
-Review notes: [docs/code-review.md](docs/code-review.md) · Fix plan: [docs/review-fix-plan.md](docs/review-fix-plan.md)
 
 ## Tests
 
