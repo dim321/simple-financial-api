@@ -421,6 +421,6 @@ run: bin/rails db:test:prepare && bundle exec rspec
 
 ## Ссылки
 
-- Исходное ревью: обсуждение в чате / PR comments
+- Исходное ревью: [code-review.md](./code-review.md)
 - README: `README.md`
 - Маршруты: `config/routes.rb`
