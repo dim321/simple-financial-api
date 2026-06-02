@@ -28,7 +28,7 @@ module Api
           end
         end
 
-        def respond_to_on_destroy
+        def respond_to_on_destroy(_options = {})
           if current_user
             sign_out(current_user)
             render json: {
