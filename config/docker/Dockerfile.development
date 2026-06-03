@@ -1,4 +1,4 @@
-ARG RUBY_VERSION=3.4.4
+ARG RUBY_VERSION=4.0.5
 FROM ruby:$RUBY_VERSION-slim
 
 # Rails app lives here
@@ -15,9 +15,9 @@ ENV BUNDLE_PATH="/usr/local/bundle"
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
-RUN gem install bundler -v 2.6.9
+RUN gem install bundler -v 4.0.13
 # Install application gems
-COPY Gemfile Gemfile.lock ./
+COPY Gemfile Gemfile.lock .ruby-version ./
 RUN bundle install
 
 

@@ -2,8 +2,8 @@
 
 Test task: financial REST API.
 
-- Ruby 3.4.4
-- Rails 8
+- Ruby 4.0.5
+- Rails 8.1.3
 
 ## Quick start
 
