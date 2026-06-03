@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_25_134000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_25_133000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -28,8 +28,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_134000) do
   end
 
   add_check_constraint "accounts", "balance_cents >= 0", name: "accounts_balance_cents_non_negative", validate: false
-  add_check_constraint "accounts", "currency::text = ANY (ARRAY['USD'::character varying, 'EUR'::character varying]::text[])", name: "accounts_currency_supported", validate: false
-  add_check_constraint "accounts", "status::text = ANY (ARRAY['active'::character varying, 'on_hold'::character varying, 'closed'::character varying]::text[])", name: "accounts_status_supported", validate: false
+  add_check_constraint "accounts", "currency::text = ANY (ARRAY['USD'::character varying::text, 'EUR'::character varying::text])", name: "accounts_currency_supported", validate: false
+  add_check_constraint "accounts", "status::text = ANY (ARRAY['active'::character varying::text, 'on_hold'::character varying::text, 'closed'::character varying::text])", name: "accounts_status_supported", validate: false
 
   create_table "idempotency_keys", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -65,7 +65,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_134000) do
   end
 
   add_check_constraint "transactions", "amount_cents > 0", name: "transactions_amount_cents_positive", validate: false
-  add_check_constraint "transactions", "currency::text = ANY (ARRAY['USD'::character varying, 'EUR'::character varying]::text[])", name: "transactions_currency_supported", validate: false
+  add_check_constraint "transactions", "currency::text = ANY (ARRAY['USD'::character varying::text, 'EUR'::character varying::text])", name: "transactions_currency_supported", validate: false
   add_check_constraint "transactions", "status = ANY (ARRAY[0, 1, 2, 3])", name: "transactions_status_supported", validate: false
   add_check_constraint "transactions", "transaction_type = 0 AND source_account_id IS NULL AND target_account_id IS NOT NULL OR transaction_type = 1 AND source_account_id IS NOT NULL AND target_account_id IS NULL OR transaction_type = 2 AND source_account_id IS NOT NULL AND target_account_id IS NOT NULL", name: "transactions_account_shape_matches_type", validate: false
   add_check_constraint "transactions", "transaction_type = ANY (ARRAY[0, 1, 2])", name: "transactions_type_supported", validate: false
